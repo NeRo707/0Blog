@@ -1,54 +1,38 @@
 import { useParams, useNavigate } from 'react-router';
 import { Container, Box, Typography, Button, CircularProgress, Card, CardMedia, CardContent } from '@mui/material';
-import { useEffect, useState } from 'react';
 import { databases } from '../lib/appwrite';
+import { useQuery } from '@tanstack/react-query';
+import { APPWRITE_CONFIG } from '../config/constants';
 import type { Blog } from '../types/blog';
 
-const DATABASE_ID = import.meta.env.VITE_APPWRITE_DATABASE_ID;
-const BLOGS_COLLECTION_ID = import.meta.env.VITE_APPWRITE_BLOGS_COLLECTION_ID;
+const fetchBlog = async (blogId: string): Promise<Blog> => {
+  const doc = await databases.getDocument(
+    APPWRITE_CONFIG.databaseId,
+    APPWRITE_CONFIG.blogsCollectionId,
+    blogId
+  );
+
+  return {
+    id: doc.$id,
+    title: doc.title as string,
+    excerpt: doc.excerpt as string,
+    image: doc.image as string,
+    author: doc.author as string,
+    date: doc.date as string,
+    category: doc.category as string,
+    readTime: doc.readTime as string,
+  };
+};
 
 export default function BlogDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [blog, setBlog] = useState<Blog | null>(null);
-  const [isPending, setIsPending] = useState(true);
-  const [error, setError] = useState('');
-
-  useEffect(() => {
-    const fetchBlog = async () => {
-      if (!id) {
-        setError('Blog ID not found');
-        setIsPending(false);
-        return;
-      }
-
-      try {
-        setIsPending(true);
-        const doc = await databases.getDocument(
-          DATABASE_ID,
-          BLOGS_COLLECTION_ID,
-          id
-        );
-
-        setBlog({
-          id: doc.$id,
-          title: doc.title as string,
-          excerpt: doc.excerpt as string,
-          image: doc.image as string,
-          author: doc.author as string,
-          date: doc.date as string,
-          category: doc.category as string,
-          readTime: doc.readTime as string,
-        });
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load blog post');
-      } finally {
-        setIsPending(false);
-      }
-    };
-
-    fetchBlog();
-  }, [id]);
+  
+  const { data: blog, isPending, isError, error } = useQuery({
+    queryKey: ['blog', id],
+    queryFn: () => fetchBlog(id!),
+    enabled: !!id,
+  });
 
   if (isPending) {
     return (
@@ -61,12 +45,12 @@ export default function BlogDetailPage() {
     );
   }
 
-  if (error || !blog) {
+  if (isError || !blog) {
     return (
       <Container maxWidth="lg" sx={{ py: 6 }}>
         <Box sx={{ textAlign: 'center' }}>
           <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 2, color: 'error.main' }}>
-            {error || 'Blog post not found'}
+            {error instanceof Error ? error.message : 'Blog post not found'}
           </Typography>
           <Button
             variant="contained"

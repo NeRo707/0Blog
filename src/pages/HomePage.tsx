@@ -3,42 +3,12 @@ import { Link as RouterLink } from 'react-router';
 import { useAuth } from '../hooks/useAuth';
 import { Container, Box, Typography, Button, Card, CardContent } from '@mui/material';
 import BlogCard from '../components/layout/BlogCard';
-
-const FEATURED_BLOGS = [
-  {
-    id: '1',
-    title: 'Getting Started with React 19: A Complete Guide',
-    excerpt: 'Learn the latest features and best practices for building modern web applications with React 19.',
-    image: 'https://images.unsplash.com/photo-1633356122544-f134324ef6db?w=500&h=300&fit=crop',
-    author: 'Sarah Chen',
-    date: '2025-03-15',
-    category: 'React',
-    readTime: '8 min read'
-  },
-  {
-    id: '2',
-    title: 'TypeScript Best Practices for 2025',
-    excerpt: 'Master TypeScript with these proven patterns and practices used by leading companies.',
-    image: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=500&h=300&fit=crop',
-    author: 'John Davis',
-    date: '2025-03-14',
-    category: 'TypeScript',
-    readTime: '12 min read'
-  },
-  {
-    id: '3',
-    title: 'Web Design Trends Shaping 2025',
-    excerpt: 'Discover the cutting-edge design trends that are transforming how we build user interfaces.',
-    image: 'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=500&h=300&fit=crop',
-    author: 'Emma Wilson',
-    date: '2025-03-13',
-    category: 'Design',
-    readTime: '6 min read'
-  },
-];
+import { useBlogs } from '../hooks/useBlogs';
 
 export default function HomePage() {
   const { isAuthenticated } = useAuth();
+
+  const featuredBlogs = useBlogs().data?.slice(0, 3) || [];
 
   return (
     <>
@@ -208,7 +178,7 @@ export default function HomePage() {
           gap: 3, 
           mb: 4 
         }}>
-          {FEATURED_BLOGS.map((blog) => (
+          {featuredBlogs.map((blog) => (
             <BlogCard {...blog} key={blog.id} />
           ))}
         </Box>

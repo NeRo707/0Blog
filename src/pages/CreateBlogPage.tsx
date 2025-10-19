@@ -2,18 +2,19 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Container, Box, TextField, Button, Typography, Card, Alert, CircularProgress } from '@mui/material';
 import { useAuth } from '../hooks/useAuth';
-import { databases } from '../lib/appwrite';
-
-const DATABASE_ID = import.meta.env.VITE_APPWRITE_DATABASE_ID;
-const BLOGS_COLLECTION_ID = import.meta.env.VITE_APPWRITE_BLOGS_COLLECTION_ID;
+import { useBlogStore } from '../store/blogStore';
+import { useCreateBlogMutation } from '../hooks/useCreateBlogMutation';
+import { useUploadImageMutation } from '../hooks/useUploadImageMutation';
 
 const CATEGORIES = ['React', 'TypeScript', 'JavaScript', 'Design', 'Backend', 'CSS', 'Performance', 'AI/ML'];
 
 export default function CreateBlogPage() {
   const navigate = useNavigate();
   const { isAuthenticated, isLoading, user } = useAuth();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState('');
+  const { imagePreview, error: uiError, setImagePreview, setError, clearError } = useBlogStore();
+  const { mutate: uploadImage, isPending: isUploading, error: uploadError } = useUploadImageMutation();
+  const { mutate: createBlog, isPending: isCreating, error: createError } = useCreateBlogMutation();
+  
   const [success, setSuccess] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
@@ -23,12 +24,42 @@ export default function CreateBlogPage() {
     image: '',
   });
 
+  const error = uiError || (uploadError instanceof Error ? uploadError.message : null) || (createError instanceof Error ? createError.message : null);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: value,
     }));
+  };
+
+  const handleImageSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.currentTarget.files?.[0];
+    if (!file) return;
+
+    clearError();
+
+    // Create preview
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const preview = event.target?.result as string;
+      setImagePreview(preview);
+    };
+    reader.readAsDataURL(file);
+
+    // Upload to server
+    uploadImage(file, {
+      onSuccess: (imageUrl) => {
+        setFormData(prev => ({
+          ...prev,
+          image: imageUrl,
+        }));
+      },
+      onError: () => {
+        setImagePreview('');
+      },
+    });
   };
 
   const handleSelectChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -40,56 +71,53 @@ export default function CreateBlogPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    clearError();
     setSuccess(false);
-    setIsSubmitting(true);
 
-    try {
-      // Validate fields
-      if (!formData.title.trim()) {
-        throw new Error('Title is required');
-      }
-      if (!formData.excerpt.trim()) {
-        throw new Error('Excerpt is required');
-      }
-      if (!formData.image.trim()) {
-        throw new Error('Image URL is required');
-      }
-
-      // Create blog document
-      await databases.createDocument(
-        DATABASE_ID,
-        BLOGS_COLLECTION_ID,
-        'unique()',
-        {
-          title: formData.title,
-          excerpt: formData.excerpt,
-          image: formData.image,
-          category: formData.category,
-          readTime: formData.readTime,
-          author: user?.name || 'Anonymous',
-          date: new Date().toISOString().split('T')[0], // YYYY-MM-DD format
-        }
-      );
-
-      setSuccess(true);
-      setFormData({
-        title: '',
-        excerpt: '',
-        category: 'React',
-        readTime: '5 min read',
-        image: '',
-      });
-
-      // Redirect to blogs page after 2 seconds
-      setTimeout(() => {
-        navigate('/blogs');
-      }, 2000);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create blog post');
-    } finally {
-      setIsSubmitting(false);
+    // Validate fields
+    if (!formData.title.trim()) {
+      setError('Title is required');
+      return;
     }
+    if (!formData.excerpt.trim()) {
+      setError('Excerpt is required');
+      return;
+    }
+    if (!formData.image.trim()) {
+      setError('Please upload an image');
+      return;
+    }
+
+    // Create blog using React Query mutation
+    createBlog(
+      {
+        title: formData.title,
+        excerpt: formData.excerpt,
+        image: formData.image,
+        category: formData.category,
+        readTime: formData.readTime,
+        author: user?.name || 'Anonymous',
+        date: new Date().toISOString().split('T')[0],
+      },
+      {
+        onSuccess: () => {
+          setSuccess(true);
+          setFormData({
+            title: '',
+            excerpt: '',
+            category: 'React',
+            readTime: '5 min read',
+            image: '',
+          });
+          setImagePreview('');
+
+          // Redirect to blogs page after 2 seconds
+          setTimeout(() => {
+            navigate('/blogs');
+          }, 2000);
+        },
+      }
+    );
   };
 
   if (isLoading) {
@@ -153,7 +181,7 @@ export default function CreateBlogPage() {
             required
             fullWidth
             placeholder="Enter blog post title"
-            disabled={isSubmitting}
+            disabled={isCreating}
           />
 
           <TextField
@@ -166,20 +194,70 @@ export default function CreateBlogPage() {
             multiline
             rows={3}
             placeholder="Enter blog post excerpt (short description)"
-            disabled={isSubmitting}
+            disabled={isCreating}
           />
 
-          <TextField
-            label="Image URL"
-            name="image"
-            value={formData.image}
-            onChange={handleChange}
-            required
-            fullWidth
-            placeholder="https://example.com/image.jpg"
-            disabled={isSubmitting}
-            helperText="Recommended size: 500x300px"
-          />
+          <Box>
+            <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 500 }}>
+              Blog Image *
+            </Typography>
+            <Box
+              sx={{
+                border: '2px dashed',
+                borderColor: '#667eea',
+                borderRadius: 2,
+                p: 3,
+                textAlign: 'center',
+                backgroundColor: 'rgba(102, 126, 234, 0.05)',
+                cursor: isCreating || isUploading ? 'not-allowed' : 'pointer',
+                opacity: isCreating || isUploading ? 0.6 : 1,
+              }}
+              component="label"
+            >
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageSelect}
+                disabled={isCreating || isUploading}
+                style={{ display: 'none' }}
+              />
+              {isUploading ? (
+                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}>
+                  <CircularProgress size={40} />
+                  <Typography variant="body2" color="textSecondary">
+                    Uploading image...
+                  </Typography>
+                </Box>
+              ) : (
+                <Box>
+                  <Typography variant="body1" sx={{ fontWeight: 500, mb: 1 }}>
+                    Click to upload or drag and drop
+                  </Typography>
+                  <Typography variant="body2" color="textSecondary">
+                    PNG, JPG, GIF up to 5MB
+                  </Typography>
+                </Box>
+              )}
+            </Box>
+
+            {imagePreview && (
+              <Box sx={{ mt: 2 }}>
+                <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 500 }}>
+                  Preview
+                </Typography>
+                <img
+                  src={imagePreview}
+                  alt="Preview"
+                  style={{
+                    maxWidth: '100%',
+                    maxHeight: 300,
+                    borderRadius: 8,
+                    border: '1px solid #e0e0e0',
+                  }}
+                />
+              </Box>
+            )}
+          </Box>
 
           <TextField
             select
@@ -188,7 +266,7 @@ export default function CreateBlogPage() {
             value={formData.category}
             onChange={handleSelectChange}
             fullWidth
-            disabled={isSubmitting}
+            disabled={isCreating}
             SelectProps={{
               native: true,
             }}
@@ -207,27 +285,27 @@ export default function CreateBlogPage() {
             onChange={handleChange}
             fullWidth
             placeholder="e.g., 5 min read"
-            disabled={isSubmitting}
+            disabled={isCreating}
           />
 
           <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center' }}>
             <Button
               type="submit"
               variant="contained"
-              disabled={isSubmitting}
+              disabled={isCreating}
               sx={{
                 backgroundColor: '#667eea',
                 '&:hover': { backgroundColor: '#5568d3' },
                 minWidth: 200,
               }}
             >
-              {isSubmitting ? <CircularProgress size={24} /> : 'Create Blog Post'}
+              {isCreating ? <CircularProgress size={24} /> : 'Create Blog Post'}
             </Button>
             <Button
               type="button"
               variant="outlined"
               onClick={() => navigate('/blogs')}
-              disabled={isSubmitting}
+              disabled={isCreating}
               sx={{ minWidth: 200 }}
             >
               Cancel

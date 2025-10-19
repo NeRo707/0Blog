@@ -3,6 +3,7 @@ import { RouterProvider } from 'react-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from './context/AuthContext';
 import { router } from './routes';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 // Create a client for TanStack Query
 const queryClient = new QueryClient({
@@ -20,6 +21,7 @@ function App() {
     <AuthProvider>
       <QueryClientProvider client={queryClient}>
         <RouterProvider router={router} />
+        <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
     </AuthProvider>
   );

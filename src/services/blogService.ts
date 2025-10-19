@@ -1,10 +1,7 @@
 import { databases } from '../lib/appwrite';
 import { Query } from 'appwrite';
+import { APPWRITE_CONFIG } from '../config/constants';
 import type { Blog } from '../types/blog';
-
-// Environment variables for Appwrite collection
-const DATABASE_ID = import.meta.env.VITE_APPWRITE_DATABASE_ID;
-const BLOGS_COLLECTION_ID = import.meta.env.VITE_APPWRITE_BLOGS_COLLECTION_ID;
 
 /**
  * Fetch all blogs from Appwrite database
@@ -12,8 +9,8 @@ const BLOGS_COLLECTION_ID = import.meta.env.VITE_APPWRITE_BLOGS_COLLECTION_ID;
 export const fetchBlogs = async (): Promise<Blog[]> => {
   try {
     const response = await databases.listDocuments(
-      DATABASE_ID,
-      BLOGS_COLLECTION_ID
+      APPWRITE_CONFIG.databaseId,
+      APPWRITE_CONFIG.blogsCollectionId
     );
 
     return response.documents.map((doc) => ({
@@ -38,8 +35,8 @@ export const fetchBlogs = async (): Promise<Blog[]> => {
 export const fetchBlogsByCategory = async (category: string): Promise<Blog[]> => {
   try {
     const response = await databases.listDocuments(
-      DATABASE_ID,
-      BLOGS_COLLECTION_ID,
+      APPWRITE_CONFIG.databaseId,
+      APPWRITE_CONFIG.blogsCollectionId,
       [Query.equal('category', category)]
     );
 
@@ -65,8 +62,8 @@ export const fetchBlogsByCategory = async (category: string): Promise<Blog[]> =>
 export const searchBlogs = async (query: string): Promise<Blog[]> => {
   try {
     const response = await databases.listDocuments(
-      DATABASE_ID,
-      BLOGS_COLLECTION_ID,
+      APPWRITE_CONFIG.databaseId,
+      APPWRITE_CONFIG.blogsCollectionId,
       [
         Query.search('title', query),
       ]
@@ -94,8 +91,8 @@ export const searchBlogs = async (query: string): Promise<Blog[]> => {
 export const fetchBlogById = async (blogId: string): Promise<Blog> => {
   try {
     const doc = await databases.getDocument(
-      DATABASE_ID,
-      BLOGS_COLLECTION_ID,
+      APPWRITE_CONFIG.databaseId,
+      APPWRITE_CONFIG.blogsCollectionId,
       blogId
     );
 
