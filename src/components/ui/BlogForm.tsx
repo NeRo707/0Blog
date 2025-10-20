@@ -10,38 +10,57 @@ import {
   Typography,
 } from '@mui/material';
 import { useState } from 'react';
+import { useBlogStore } from '../../store/blogStore';
+import { useUploadImageMutation } from '../../hooks/useUploadImageMutation';
 
 const CATEGORIES = ['React', 'TypeScript', 'JavaScript', 'Design', 'Backend', 'CSS', 'Performance', 'AI/ML'];
 
 interface BlogFormProps {
-  formData: {
-    title: string;
-    excerpt: string;
-    content?: string;
-    category: string;
-    readTime: string;
-    image: string;
-  };
-  imagePreview: string | null;
-  error: string | null;
-  isUploading: boolean;
   isSubmitting: boolean;
-  onFormChange: (field: string, value: string) => void;
-  onImageSelect: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onSubmit: (e: React.FormEvent) => void;
 }
 
 export default function BlogForm({
-  formData,
-  imagePreview,
-  error,
-  isUploading,
   isSubmitting,
-  onFormChange,
-  onImageSelect,
   onSubmit,
 }: BlogFormProps) {
   const [previewOpen, setPreviewOpen] = useState(false);
+  
+  const {
+    createFormData: formData,
+    createImagePreview: imagePreview,
+    error,
+    setCreateFormField,
+    setCreateImagePreview,
+    clearError,
+  } = useBlogStore();
+  
+  const { mutate: uploadImage, isPending: isUploading } = useUploadImageMutation();
+
+  const handleImageSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.currentTarget.files?.[0];
+    if (!file) return;
+
+    clearError();
+
+    // Create preview
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const preview = event.target?.result as string;
+      setCreateImagePreview(preview);
+    };
+    reader.readAsDataURL(file);
+
+    // Upload to server
+    uploadImage(file, {
+      onSuccess: (imageUrl) => {
+        setCreateFormField('image', imageUrl);
+      },
+      onError: () => {
+        setCreateImagePreview('');
+      },
+    });
+  };
 
   return (
     <form onSubmit={onSubmit}>
@@ -53,7 +72,7 @@ export default function BlogForm({
           <TextField
             label="Blog Title"
             value={formData.title}
-            onChange={(e) => onFormChange('title', e.target.value)}
+            onChange={(e) => setCreateFormField('title', e.target.value)}
             fullWidth
             required
             placeholder="Enter your blog title"
@@ -62,7 +81,7 @@ export default function BlogForm({
           <TextField
             label="Excerpt"
             value={formData.excerpt}
-            onChange={(e) => onFormChange('excerpt', e.target.value)}
+            onChange={(e) => setCreateFormField('excerpt', e.target.value)}
             fullWidth
             required
             multiline
@@ -74,7 +93,7 @@ export default function BlogForm({
             select
             label="Category"
             value={formData.category}
-            onChange={(e) => onFormChange('category', e.target.value)}
+            onChange={(e) => setCreateFormField('category', e.target.value)}
             fullWidth
             required
           >
@@ -88,15 +107,15 @@ export default function BlogForm({
           <TextField
             label="Read Time"
             value={formData.readTime}
-            onChange={(e) => onFormChange('readTime', e.target.value)}
+            onChange={(e) => setCreateFormField('readTime', e.target.value)}
             fullWidth
             placeholder="e.g., 5 min read"
           />
 
           <TextField
             label="Blog Content"
-            value={formData.content || ''}
-            onChange={(e) => onFormChange('content', e.target.value)}
+            value={formData.content}
+            onChange={(e) => setCreateFormField('content', e.target.value)}
             fullWidth
             multiline
             rows={6}
@@ -110,7 +129,7 @@ export default function BlogForm({
             <input
               type="file"
               accept="image/*"
-              onChange={onImageSelect}
+              onChange={handleImageSelect}
               disabled={isUploading}
               style={{ display: 'block', marginBottom: '8px' }}
             />

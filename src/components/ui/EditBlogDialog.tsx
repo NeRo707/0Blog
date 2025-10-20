@@ -8,70 +8,92 @@ import {
   Box,
   Typography,
   Alert,
+  MenuItem,
 } from "@mui/material";
-import type { Blog } from "../../types/blog";
+import { useBlogStore } from "../../store/blogStore";
+import { useUploadImageMutation } from "../../hooks/useUploadImageMutation";
+
+const CATEGORIES = [
+  "React",
+  "TypeScript",
+  "JavaScript",
+  "Design",
+  "Backend",
+  "CSS",
+  "Performance",
+  "AI/ML",
+];
 
 interface EditBlogDialogProps {
-  open: boolean;
-  editFormData: Partial<Blog>;
-  editImagePreview: string | null;
   isUpdating: boolean;
-  isUploadingImage: boolean;
-  updateError: Error | null;
-  onClose: () => void;
-  onFormChange: (field: string, value: string) => void;
-  onImageSelect: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onSave: () => void;
 }
 
 export default function EditBlogDialog({
-  open,
-  editFormData,
-  editImagePreview,
   isUpdating,
-  isUploadingImage,
-  updateError,
-  onClose,
-  onFormChange,
-  onImageSelect,
   onSave,
 }: EditBlogDialogProps) {
-  const CATEGORIES = [
-    "React",
-    "TypeScript",
-    "JavaScript",
-    "Design",
-    "Backend",
-    "CSS",
-    "Performance",
-    "AI/ML",
-  ];
+  const {
+    isEditDialogOpen: open,
+    editFormData,
+    editImagePreview,
+    error,
+    closeEditDialog,
+    setEditFormField,
+    setEditImagePreview,
+    clearError,
+  } = useBlogStore();
+  
+  const { mutate: uploadImage, isPending: isUploadingImage } = useUploadImageMutation();
+
+  const handleImageSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.currentTarget.files?.[0];
+    if (!file) return;
+
+    clearError();
+
+    // Create preview
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const preview = event.target?.result as string;
+      setEditImagePreview(preview);
+    };
+    reader.readAsDataURL(file);
+
+    // Upload to server
+    uploadImage(file, {
+      onSuccess: (imageUrl) => {
+        setEditFormField('image', imageUrl);
+      },
+      onError: () => {
+        setEditImagePreview('');
+      },
+    });
+  };
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
+    <Dialog open={open} onClose={closeEditDialog} maxWidth="md" fullWidth>
       <DialogTitle>Edit Blog Post</DialogTitle>
       <DialogContent
         sx={{ pt: 2, display: "flex", flexDirection: "column", gap: 2 }}
       >
-        {updateError && (
+        {error && (
           <Alert severity="error">
-            {updateError instanceof Error
-              ? updateError.message
-              : "An error occurred"}
+            {error}
           </Alert>
         )}
 
         <TextField
           label="Title"
           value={editFormData.title || ""}
-          onChange={(e) => onFormChange("title", e.target.value)}
+          onChange={(e) => setEditFormField("title", e.target.value)}
           fullWidth
         />
 
         <TextField
           label="Excerpt"
           value={editFormData.excerpt || ""}
-          onChange={(e) => onFormChange("excerpt", e.target.value)}
+          onChange={(e) => setEditFormField("excerpt", e.target.value)}
           fullWidth
           multiline
           rows={3}
@@ -80,7 +102,7 @@ export default function EditBlogDialog({
         <TextField
           label="Content"
           value={editFormData.content || ""}
-          onChange={(e) => onFormChange("content", e.target.value)}
+          onChange={(e) => setEditFormField("content", e.target.value)}
           fullWidth
           multiline
           rows={6}
@@ -118,7 +140,7 @@ export default function EditBlogDialog({
               type="file"
               accept="image/*"
               hidden
-              onChange={onImageSelect}
+              onChange={handleImageSelect}
             />
           </Button>
         </Box>
@@ -127,27 +149,27 @@ export default function EditBlogDialog({
           select
           label="Category"
           value={editFormData.category || ""}
-          onChange={(e) => onFormChange("category", e.target.value)}
+          onChange={(e) => setEditFormField("category", e.target.value)}
           fullWidth
         >
           {CATEGORIES.map((cat) => (
-            <option key={cat} value={cat}>
+            <MenuItem key={cat} value={cat}>
               {cat}
-            </option>
+            </MenuItem>
           ))}
         </TextField>
 
         <TextField
           label="Read Time"
           value={editFormData.readTime || ""}
-          onChange={(e) => onFormChange("readTime", e.target.value)}
+          onChange={(e) => setEditFormField("readTime", e.target.value)}
           fullWidth
           placeholder="e.g., 5 min read"
         />
       </DialogContent>
 
       <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
+        <Button onClick={closeEditDialog}>Cancel</Button>
         <Button
           onClick={onSave}
           variant="contained"

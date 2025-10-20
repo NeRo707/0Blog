@@ -13,9 +13,9 @@ import { databases } from "../lib/appwrite";
 import { useQuery } from "@tanstack/react-query";
 import { APPWRITE_CONFIG } from "../config/constants";
 import { useAuth } from "../hooks/useAuth";
+import { useBlogStore } from "../store/blogStore";
 import { useUpdateBlogMutation } from "../hooks/useUpdateBlogMutation";
 import { useDeleteBlogMutation } from "../hooks/useDeleteBlogMutation";
-import { useUploadImageMutation } from "../hooks/useUploadImageMutation";
 import {
   BlogHeader,
   BlogContent,
@@ -24,7 +24,6 @@ import {
   DeleteConfirmDialog,
 } from "../components/ui";
 import type { Blog } from "../types/blog";
-import { useState } from "react";
 
 const fetchBlog = async (blogId: string): Promise<Blog> => {
   const doc = await databases.getDocument(
@@ -51,19 +50,17 @@ export default function BlogDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [isEditOpen, setIsEditOpen] = useState(false);
-  const [editImagePreview, setEditImagePreview] = useState<string | null>(null);
-  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
-  const [editFormData, setEditFormData] = useState<Partial<Blog>>({});
+  const {
+    editFormData,
+    openEditDialog,
+    openDeleteDialog,
+  } = useBlogStore();
 
   const {
     mutate: updateBlog,
     isPending: isUpdating,
-    error: updateError,
   } = useUpdateBlogMutation();
   const { mutate: deleteBlog, isPending: isDeleting } = useDeleteBlogMutation();
-  const { mutate: uploadImage, isPending: isUploadingImage } =
-    useUploadImageMutation();
 
   const {
     data: blog,
@@ -80,37 +77,7 @@ export default function BlogDetailPage() {
 
   const handleEditClick = () => {
     if (!blog) return;
-    setEditFormData(blog);
-    setEditImagePreview(blog.image);
-    setIsEditOpen(true);
-  };
-
-  const handleEditImageSelect = async (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const file = e.currentTarget.files?.[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const preview = event.target?.result as string;
-      setEditImagePreview(preview);
-    };
-    reader.readAsDataURL(file);
-    uploadImage(file, {
-      onSuccess: (imageUrl) => {
-        setEditFormData((prev) => ({
-          ...prev,
-          image: imageUrl,
-        }));
-      },
-    });
-  };
-
-  const handleEditChange = (field: string, value: string) => {
-    setEditFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
+    openEditDialog(blog);
   };
 
   const handleSaveEdit = () => {
@@ -127,14 +94,7 @@ export default function BlogDetailPage() {
       date: editFormData.date,
     } as Partial<Omit<Blog, "id">>;
 
-    updateBlog(
-      { blogId: id, updates },
-      {
-        onSuccess: () => {
-          setIsEditOpen(false);
-        },
-      }
-    );
+    updateBlog({ blogId: id, updates });
   };
 
   const handleDeleteConfirm = () => {
@@ -209,7 +169,7 @@ export default function BlogDetailPage() {
           <BlogActions
             isOwner={isOwner}
             onEdit={handleEditClick}
-            onDelete={() => setDeleteConfirmOpen(true)}
+            onDelete={openDeleteDialog}
           />
           <BlogContent blog={blog} />
 
@@ -230,23 +190,13 @@ export default function BlogDetailPage() {
 
       {/* Edit Dialog */}
       <EditBlogDialog
-        open={isEditOpen}
-        editFormData={editFormData}
-        editImagePreview={editImagePreview}
         isUpdating={isUpdating}
-        isUploadingImage={isUploadingImage}
-        updateError={updateError instanceof Error ? updateError : null}
-        onClose={() => setIsEditOpen(false)}
-        onFormChange={handleEditChange}
-        onImageSelect={handleEditImageSelect}
         onSave={handleSaveEdit}
       />
 
       {/* Delete Confirmation Dialog */}
       <DeleteConfirmDialog
-        open={deleteConfirmOpen}
         isDeleting={isDeleting}
-        onClose={() => setDeleteConfirmOpen(false)}
         onConfirm={handleDeleteConfirm}
       />
     </Container>

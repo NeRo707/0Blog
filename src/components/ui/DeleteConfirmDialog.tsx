@@ -6,22 +6,21 @@ import {
   Button,
   Typography,
 } from "@mui/material";
+import { useBlogStore } from "../../store/blogStore";
 
 interface DeleteConfirmDialogProps {
-  open: boolean;
   isDeleting: boolean;
-  onClose: () => void;
   onConfirm: () => void;
 }
 
 export default function DeleteConfirmDialog({
-  open,
   isDeleting,
-  onClose,
   onConfirm,
 }: DeleteConfirmDialogProps) {
+  const { isDeleteDialogOpen: open, closeDeleteDialog } = useBlogStore();
+  
   return (
-    <Dialog open={open} onClose={onClose}>
+    <Dialog open={open} onClose={closeDeleteDialog}>
       <DialogTitle>Delete Blog Post?</DialogTitle>
       <DialogContent>
         <Typography>
@@ -30,7 +29,7 @@ export default function DeleteConfirmDialog({
         </Typography>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
+        <Button onClick={closeDeleteDialog}>Cancel</Button>
         <Button
           onClick={onConfirm}
           variant="contained"
