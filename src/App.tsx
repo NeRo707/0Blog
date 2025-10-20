@@ -57,7 +57,7 @@ function AppContent() {
                   dark: '#202020',
                 },
                 secondary: {
-                  main: '#ce93d8', // Lighter purple for dark mode
+                  main: '#7a3c85ff', // Lighter purple for dark mode
                   light: '#f3e5f5',
                   dark: '#ab47bc',
                 },

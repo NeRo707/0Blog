@@ -8,12 +8,10 @@ import type { Blog } from '../types/blog';
  * Requires authenticated user
  */
 export const useBlogs = () => {
-  const { isAuthenticated } = useAuth();
 
   return useQuery<Blog[]>({
     queryKey: ['blogs'],
     queryFn: fetchBlogs,
-    enabled: isAuthenticated,
     staleTime: 5 * 60 * 1000, // 5 minutes
     retry: 2,
   });

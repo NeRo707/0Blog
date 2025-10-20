@@ -36,11 +36,13 @@ export default function BlogCard({ id, title, excerpt, image, author, date, cate
           <Chip 
             label={category} 
             size="small" 
-            sx={{ bgcolor: 'primary.main', color: 'white' }}
+            color='secondary'
+            sx={{ color: 'white' }}
           />
           <Chip 
             label={readTime} 
             size="small" 
+            color='info'
             variant="outlined"
           />
         </Box>
@@ -61,7 +63,7 @@ export default function BlogCard({ id, title, excerpt, image, author, date, cate
             component={Link}
             to={`/blogs/${id}`}
             variant="contained" 
-            color="primary"
+            color="info"
             sx={{ width: '100%' }}
           >
             Read More

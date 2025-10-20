@@ -129,7 +129,7 @@ export default function BlogDetailPage() {
           </Typography>
           <Button
             variant="contained"
-            color="primary"
+            color="info"
             onClick={() => navigate("/blogs")}
           >
             Back to Blogs
@@ -145,6 +145,7 @@ export default function BlogDetailPage() {
       <Button
         onClick={() => navigate("/blogs")}
         sx={{ mb: 4, textTransform: "none", fontSize: "1rem" }}
+        color="info"
       >
         ← Back to Blogs
       </Button>
@@ -173,9 +174,9 @@ export default function BlogDetailPage() {
           {/* Back Button */}
           <Button
             variant="contained"
-            color="primary"
             onClick={() => navigate("/blogs")}
             sx={{ mt: 4 }}
+            color="info"
           >
             ← Back to All Blogs
           </Button>

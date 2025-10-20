@@ -24,18 +24,12 @@ export const router = createBrowserRouter([
       },
       {
         path: "blogs",
-        element: (
-          <ProtectedRoute>
-            <BlogListPage />
-          </ProtectedRoute>
-        ),
+        element: <BlogListPage />,
       },
       {
         path: "blogs/:id",
         element: (
-          <ProtectedRoute>
             <BlogDetailPage />
-          </ProtectedRoute>
         ),
       },
       {
