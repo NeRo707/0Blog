@@ -17,22 +17,15 @@ export default function BlogActions({
     <Box sx={{ display: "flex", gap: 2, mb: 4 }}>
       <Button
         variant="contained"
+        color="primary"
         onClick={onEdit}
-        sx={{
-          backgroundColor: "#667eea",
-          "&:hover": { backgroundColor: "#5568d3" },
-        }}
       >
         ✏️ Edit Post
       </Button>
       <Button
         variant="outlined"
+        color="error"
         onClick={onDelete}
-        sx={{
-          color: "#d32f2f",
-          borderColor: "#d32f2f",
-          "&:hover": { backgroundColor: "#ffebee" },
-        }}
       >
         🗑️ Delete Post
       </Button>

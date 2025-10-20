@@ -14,7 +14,7 @@ export default function HomePage() {
     <>
       {/* Hero Section */}
       <Box sx={{ 
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        bgcolor: 'primary.main',
         color: 'white',
         py: { xs: 10, md: 14 },
         mb: 8
@@ -41,7 +41,7 @@ export default function HomePage() {
                   size="large"
                   sx={{ 
                     backgroundColor: 'white', 
-                    color: '#667eea',
+                    color: 'primary.main',
                     fontWeight: 'bold',
                     '&:hover': { backgroundColor: '#f0f0f0' }
                   }}
@@ -188,11 +188,8 @@ export default function HomePage() {
             component={RouterLink}
             to="/blogs"
             variant="contained"
+            color="primary"
             size="large"
-            sx={{ 
-              backgroundColor: '#667eea',
-              '&:hover': { backgroundColor: '#5568d3' }
-            }}
           >
             View All Articles
           </Button>
@@ -202,7 +199,7 @@ export default function HomePage() {
       {/* CTA Section */}
       {!isAuthenticated && (
         <Box sx={{ 
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          bgcolor: 'primary.main',
           color: 'white',
           py: 10,
           textAlign: 'center',
@@ -222,7 +219,7 @@ export default function HomePage() {
               size="large"
               sx={{ 
                 backgroundColor: 'white', 
-                color: '#667eea',
+                color: 'primary.main',
                 fontWeight: 'bold',
                 '&:hover': { backgroundColor: '#f0f0f0' }
               }}

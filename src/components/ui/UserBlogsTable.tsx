@@ -142,11 +142,8 @@ export default function UserBlogsTable({ blogs, isLoading = false }: UserBlogsTa
           </Typography>
           <Button
             variant="contained"
+            color="primary"
             onClick={() => navigate('/blogs/create')}
-            sx={{
-              backgroundColor: '#667eea',
-              '&:hover': { backgroundColor: '#5568d3' },
-            }}
           >
             + Create Blog
           </Button>
@@ -172,11 +169,8 @@ export default function UserBlogsTable({ blogs, isLoading = false }: UserBlogsTa
             </Typography>
             <Button
               variant="contained"
+              color="primary"
               onClick={() => navigate('/blogs/create')}
-              sx={{
-                backgroundColor: '#667eea',
-                '&:hover': { backgroundColor: '#5568d3' },
-              }}
             >
               + New Post
             </Button>
@@ -190,7 +184,7 @@ export default function UserBlogsTable({ blogs, isLoading = false }: UserBlogsTa
 
           <TableContainer component={Paper}>
             <Table>
-              <TableHead sx={{ backgroundColor: '#f5f5f5' }}>
+              <TableHead sx={{ bgcolor: 'action.hover' }}>
                 <TableRow>
                   <TableCell sx={{ fontWeight: 'bold', width: '120px' }}>Image</TableCell>
                   <TableCell sx={{ fontWeight: 'bold' }}>Title</TableCell>
@@ -202,7 +196,7 @@ export default function UserBlogsTable({ blogs, isLoading = false }: UserBlogsTa
               </TableHead>
               <TableBody>
                 {blogs.map((blog) => (
-                  <TableRow key={blog.id} sx={{ '&:hover': { backgroundColor: '#f9f9f9' } }}>
+                  <TableRow key={blog.id} sx={{ '&:hover': { bgcolor: 'action.hover' } }}>
                     <TableCell>
                       {blog.image ? (
                         <Box
@@ -221,12 +215,12 @@ export default function UserBlogsTable({ blogs, isLoading = false }: UserBlogsTa
                           sx={{
                             width: '100px',
                             height: '70px',
-                            backgroundColor: '#e0e0e0',
+                            bgcolor: 'action.disabledBackground',
                             borderRadius: 1,
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            color: '#999',
+                            color: 'text.disabled',
                             fontSize: '12px',
                           }}
                         >
@@ -239,8 +233,9 @@ export default function UserBlogsTable({ blogs, isLoading = false }: UserBlogsTa
                     <TableCell align="center">
                       <Button
                         size="small"
+                        color="primary"
                         onClick={() => handleEditClick(blog)}
-                        sx={{ color: '#667eea', mr: 1 }}
+                        sx={{ mr: 1 }}
                         disabled={isUpdating || isDeleting}
                       >
                         Edit
@@ -248,7 +243,7 @@ export default function UserBlogsTable({ blogs, isLoading = false }: UserBlogsTa
                       <Button
                         size="small"
                         onClick={() => setDeleteConfirmId(blog.id)}
-                        sx={{ color: '#d32f2f' }}
+                        sx={{ color: 'error.main' }}
                         disabled={isUpdating || isDeleting}
                       >
                         Delete
@@ -304,7 +299,7 @@ export default function UserBlogsTable({ blogs, isLoading = false }: UserBlogsTa
                   objectFit: 'cover',
                   borderRadius: 1,
                   mb: 1,
-                  backgroundColor: '#f0f0f0',
+                  bgcolor: 'action.hover',
                 }}
               />
             )}
@@ -355,8 +350,8 @@ export default function UserBlogsTable({ blogs, isLoading = false }: UserBlogsTa
           <Button
             onClick={handleSaveEdit}
             variant="contained"
+            color="primary"
             disabled={isUpdating}
-            sx={{ backgroundColor: '#667eea', '&:hover': { backgroundColor: '#5568d3' } }}
           >
             {isUpdating ? 'Saving...' : 'Save'}
           </Button>

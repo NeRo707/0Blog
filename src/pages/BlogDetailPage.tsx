@@ -129,11 +129,8 @@ export default function BlogDetailPage() {
           </Typography>
           <Button
             variant="contained"
+            color="primary"
             onClick={() => navigate("/blogs")}
-            sx={{
-              backgroundColor: "#667eea",
-              "&:hover": { backgroundColor: "#5568d3" },
-            }}
           >
             Back to Blogs
           </Button>
@@ -176,12 +173,9 @@ export default function BlogDetailPage() {
           {/* Back Button */}
           <Button
             variant="contained"
+            color="primary"
             onClick={() => navigate("/blogs")}
-            sx={{
-              backgroundColor: "#667eea",
-              "&:hover": { backgroundColor: "#5568d3" },
-              mt: 4,
-            }}
+            sx={{ mt: 4 }}
           >
             ← Back to All Blogs
           </Button>

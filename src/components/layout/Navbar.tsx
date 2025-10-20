@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
-import { AppBar, Toolbar, Button, Box, Container, Menu, MenuItem } from '@mui/material';
+import { AppBar, Toolbar, Button, Box, Container, Menu, MenuItem, IconButton } from '@mui/material';
 import { useAuth } from '../../hooks/useAuth';
+import { useBlogStore } from '../../store/blogStore';
 
 export default function Navbar() {
   const navigate = useNavigate();
   const { isAuthenticated, user, signout } = useAuth();
+  const { themeMode, toggleTheme } = useBlogStore();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -24,7 +26,7 @@ export default function Navbar() {
 
   return (
     <AppBar position="sticky" sx={{ 
-      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+      bgcolor: 'primary.main',
       boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
     }}>
       <Container maxWidth="lg">
@@ -63,6 +65,18 @@ export default function Navbar() {
 
             {/* Auth Buttons */}
             <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+              {/* Theme Toggle Button */}
+              <IconButton
+                onClick={toggleTheme}
+                sx={{ 
+                  color: 'white',
+                  '&:hover': { backgroundColor: 'rgba(255,255,255,0.1)' }
+                }}
+                title={`Switch to ${themeMode === 'light' ? 'dark' : 'light'} mode`}
+              >
+                {themeMode === 'light' ? '🌙' : '☀️'}
+              </IconButton>
+              
               {isAuthenticated ? (
                 <>
                   <Button
@@ -104,7 +118,7 @@ export default function Navbar() {
                   <Link to="/sign-up" style={{ textDecoration: 'none' }}>
                     <Button variant="contained" sx={{ 
                       backgroundColor: 'white', 
-                      color: '#667eea',
+                      color: 'primary.main',
                       fontWeight: 'bold',
                       '&:hover': { backgroundColor: '#f0f0f0' }
                     }}>

@@ -53,9 +53,8 @@ export default function BlogListHeader({
         </TextField>
         <Button
           variant="contained"
+          color="primary"
           sx={{
-            backgroundColor: '#667eea',
-            '&:hover': { backgroundColor: '#5568d3' },
             height: 56,
           }}
         >

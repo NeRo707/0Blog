@@ -33,9 +33,9 @@ export default function MetricsChart({ title, icon, metrics }: MetricsChartProps
                 variant="determinate"
                 value={metric.max ? (metric.value / metric.max) * 100 : metric.value}
                 sx={{
-                  backgroundColor: '#eee',
+                  bgcolor: 'action.hover',
                   '& .MuiLinearProgress-bar': {
-                    backgroundColor: metric.color || '#667eea',
+                    backgroundColor: metric.color || 'primary.main',
                   },
                 }}
               />

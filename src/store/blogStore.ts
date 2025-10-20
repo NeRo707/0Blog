@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import type { Blog } from '../types/blog';
+import type { PaletteMode } from '@mui/material';
 
 interface BlogFormData {
   title: string;
@@ -11,6 +12,10 @@ interface BlogFormData {
 }
 
 interface BlogStore {
+  // Theme State
+  themeMode: PaletteMode;
+  toggleTheme: () => void;
+  
   // Create Blog Form State
   createFormData: BlogFormData;
   createImagePreview: string;
@@ -59,6 +64,15 @@ const initialCreateFormData: BlogFormData = {
 };
 
 export const useBlogStore = create<BlogStore>((set) => ({
+  // Theme State
+  themeMode: (localStorage.getItem('theme-mode') as PaletteMode) || 'light',
+  toggleTheme: () =>
+    set((state) => {
+      const newMode = state.themeMode === 'light' ? 'dark' : 'light';
+      localStorage.setItem('theme-mode', newMode);
+      return { themeMode: newMode };
+    }),
+  
   // Create Blog State
   createFormData: initialCreateFormData,
   createImagePreview: '',

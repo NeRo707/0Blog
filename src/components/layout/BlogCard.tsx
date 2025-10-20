@@ -36,7 +36,7 @@ export default function BlogCard({ id, title, excerpt, image, author, date, cate
           <Chip 
             label={category} 
             size="small" 
-            sx={{ backgroundColor: '#667eea', color: 'white' }}
+            sx={{ bgcolor: 'primary.main', color: 'white' }}
           />
           <Chip 
             label={readTime} 
@@ -61,11 +61,8 @@ export default function BlogCard({ id, title, excerpt, image, author, date, cate
             component={Link}
             to={`/blogs/${id}`}
             variant="contained" 
-            sx={{ 
-              backgroundColor: '#667eea',
-              width: '100%',
-              '&:hover': { backgroundColor: '#5568d3' }
-            }}
+            color="primary"
+            sx={{ width: '100%' }}
           >
             Read More
           </Button>

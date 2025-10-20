@@ -74,12 +74,9 @@ export default function SignUpPage() {
           <Button
             type="submit"
             variant="contained"
+            color="primary"
             disabled={isPending}
-            sx={{
-              backgroundColor: '#667eea',
-              '&:hover': { backgroundColor: '#5568d3' },
-              mt: 2,
-            }}
+            sx={{ mt: 2 }}
           >
             {isPending ? <CircularProgress size={24} /> : 'Sign Up'}
           </Button>

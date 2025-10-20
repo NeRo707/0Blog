@@ -141,11 +141,10 @@ export default function BlogForm({
           <Button
             type="submit"
             variant="contained"
+            color="primary"
             fullWidth
             disabled={isSubmitting || isUploading || !formData.title || !formData.excerpt}
             sx={{
-              backgroundColor: '#667eea',
-              '&:hover': { backgroundColor: '#5568d3' },
               height: '48px',
               fontSize: '1rem',
               fontWeight: 'bold',

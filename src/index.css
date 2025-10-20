@@ -8,6 +8,18 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Reset webkit text decoration */
+* {
+  -webkit-text-decoration: none !important;
+  text-decoration: none !important;
+}
+
+/* Allow links to have their own text decoration */
+a {
+  -webkit-text-decoration: inherit !important;
+  text-decoration: inherit !important;
+}
+
 body {
   margin: 0;
 }

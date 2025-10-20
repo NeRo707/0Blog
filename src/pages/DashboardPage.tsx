@@ -52,7 +52,7 @@ export default function DashboardPage() {
           value={totalPosts}
           trend={`${Math.max(0, totalPosts - 1)}+ blogs`}
           icon="📝"
-          gradient="linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+          gradient="linear-gradient(135deg, #1976d2 0%, #42a5f5 100%)"
         />
         <StatsCard
           label="Total Views"
@@ -83,8 +83,8 @@ export default function DashboardPage() {
           title="Key Metrics"
           icon="🎯"
           metrics={[
-            { label: 'Engagement Rate', value: 78, max: 100, color: '#667eea' },
-            { label: 'Avg. Reading Time', value: Math.ceil(parseFloat(avgReadTime as string)), max: 10, color: '#764ba2' },
+            { label: 'Engagement Rate', value: 78, max: 100, color: '#1976d2' },
+            { label: 'Avg. Reading Time', value: Math.ceil(parseFloat(avgReadTime as string)), max: 10, color: '#9c27b0' },
             { label: 'Share Rate', value: 62, max: 100, color: '#f5576c' },
           ]}
         />
@@ -104,7 +104,7 @@ export default function DashboardPage() {
                 ).map(([category, count]) => ({
                   label: category,
                   value: count,
-                  color: '#667eea',
+                  color: '#1976d2',
                 }))
               : [{ label: 'No posts yet', value: 0, color: '#ccc' }]
           }
@@ -115,7 +115,7 @@ export default function DashboardPage() {
       <UserBlogsTable blogs={userBlogs} isLoading={isPending} />
 
       {isError && (
-        <Box sx={{ mt: 2, p: 2, backgroundColor: '#ffebee', borderRadius: 1 }}>
+        <Box sx={{ mt: 2, p: 2, bgcolor: 'error.light', borderRadius: 1 }}>
           <Typography color="error">Failed to load your blogs. Please try again.</Typography>
         </Box>
       )}

@@ -40,7 +40,7 @@ export default function BlogContent({ blog }: BlogContentProps) {
       {/* Additional Info */}
       <Box
         sx={{
-          backgroundColor: "#f5f5f5",
+          bgcolor: "action.hover",
           p: 2,
           borderRadius: 1,
           display: "flex",

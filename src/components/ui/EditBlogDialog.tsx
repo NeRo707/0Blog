@@ -9,6 +9,7 @@ import {
   Typography,
   Alert,
   MenuItem,
+  CircularProgress,
 } from "@mui/material";
 import { useBlogStore } from "../../store/blogStore";
 import { useUploadImageMutation } from "../../hooks/useUploadImageMutation";
@@ -124,7 +125,7 @@ export default function EditBlogDialog({
                 objectFit: "cover",
                 borderRadius: 1,
                 mb: 1,
-                backgroundColor: "#f0f0f0",
+                bgcolor: "action.hover",
               }}
             />
           )}
@@ -173,13 +174,10 @@ export default function EditBlogDialog({
         <Button
           onClick={onSave}
           variant="contained"
+          color="primary"
           disabled={isUpdating}
-          sx={{
-            backgroundColor: "#667eea",
-            "&:hover": { backgroundColor: "#5568d3" },
-          }}
         >
-          {isUpdating ? "Saving..." : "Save"}
+          {isUpdating ? <CircularProgress size={20} /> : "Save"}
         </Button>
       </DialogActions>
     </Dialog>

@@ -12,7 +12,7 @@ export default function BlogHeader({ blog }: BlogHeaderProps) {
       <Box
         sx={{
           display: "inline-block",
-          backgroundColor: "#667eea",
+          bgcolor: "primary.main",
           color: "white",
           px: 2,
           py: 0.5,
