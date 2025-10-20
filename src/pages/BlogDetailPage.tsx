@@ -1,9 +1,30 @@
-import { useParams, useNavigate } from 'react-router';
-import { Container, Box, Typography, Button, CircularProgress, Card, CardMedia, CardContent } from '@mui/material';
-import { databases } from '../lib/appwrite';
-import { useQuery } from '@tanstack/react-query';
-import { APPWRITE_CONFIG } from '../config/constants';
-import type { Blog } from '../types/blog';
+import { useParams, useNavigate } from "react-router";
+import {
+  Container,
+  Box,
+  Typography,
+  Button,
+  CircularProgress,
+  Card,
+  CardMedia,
+  CardContent,
+} from "@mui/material";
+import { databases } from "../lib/appwrite";
+import { useQuery } from "@tanstack/react-query";
+import { APPWRITE_CONFIG } from "../config/constants";
+import { useAuth } from "../hooks/useAuth";
+import { useUpdateBlogMutation } from "../hooks/useUpdateBlogMutation";
+import { useDeleteBlogMutation } from "../hooks/useDeleteBlogMutation";
+import { useUploadImageMutation } from "../hooks/useUploadImageMutation";
+import {
+  BlogHeader,
+  BlogContent,
+  BlogActions,
+  EditBlogDialog,
+  DeleteConfirmDialog,
+} from "../components/ui";
+import type { Blog } from "../types/blog";
+import { useState } from "react";
 
 const fetchBlog = async (blogId: string): Promise<Blog> => {
   const doc = await databases.getDocument(
@@ -16,8 +37,10 @@ const fetchBlog = async (blogId: string): Promise<Blog> => {
     id: doc.$id,
     title: doc.title as string,
     excerpt: doc.excerpt as string,
+    content: doc.content as string | undefined,
     image: doc.image as string,
     author: doc.author as string,
+    authorId: doc.authorId as string,
     date: doc.date as string,
     category: doc.category as string,
     readTime: doc.readTime as string,
@@ -27,16 +50,105 @@ const fetchBlog = async (blogId: string): Promise<Blog> => {
 export default function BlogDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  
-  const { data: blog, isPending, isError, error } = useQuery({
-    queryKey: ['blog', id],
+  const { user } = useAuth();
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [editImagePreview, setEditImagePreview] = useState<string | null>(null);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [editFormData, setEditFormData] = useState<Partial<Blog>>({});
+
+  const {
+    mutate: updateBlog,
+    isPending: isUpdating,
+    error: updateError,
+  } = useUpdateBlogMutation();
+  const { mutate: deleteBlog, isPending: isDeleting } = useDeleteBlogMutation();
+  const { mutate: uploadImage, isPending: isUploadingImage } =
+    useUploadImageMutation();
+
+  const {
+    data: blog,
+    isPending,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ["blog", id],
     queryFn: () => fetchBlog(id!),
     enabled: !!id,
   });
 
+  const isOwner = user?.id === blog?.authorId;
+
+  const handleEditClick = () => {
+    if (!blog) return;
+    setEditFormData(blog);
+    setEditImagePreview(blog.image);
+    setIsEditOpen(true);
+  };
+
+  const handleEditImageSelect = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = e.currentTarget.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const preview = event.target?.result as string;
+      setEditImagePreview(preview);
+    };
+    reader.readAsDataURL(file);
+    uploadImage(file, {
+      onSuccess: (imageUrl) => {
+        setEditFormData((prev) => ({
+          ...prev,
+          image: imageUrl,
+        }));
+      },
+    });
+  };
+
+  const handleEditChange = (field: string, value: string) => {
+    setEditFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const handleSaveEdit = () => {
+    if (!id || !blog) return;
+    const updates = {
+      title: editFormData.title,
+      excerpt: editFormData.excerpt,
+      content: editFormData.content,
+      category: editFormData.category,
+      readTime: editFormData.readTime,
+      image: editFormData.image,
+      author: editFormData.author,
+      authorId: editFormData.authorId,
+      date: editFormData.date,
+    } as Partial<Omit<Blog, "id">>;
+
+    updateBlog(
+      { blogId: id, updates },
+      {
+        onSuccess: () => {
+          setIsEditOpen(false);
+        },
+      }
+    );
+  };
+
+  const handleDeleteConfirm = () => {
+    if (!id) return;
+    deleteBlog(id, {
+      onSuccess: () => {
+        navigate("/blogs");
+      },
+    });
+  };
+
   if (isPending) {
     return (
-      <Container maxWidth="lg" sx={{ py: 6, textAlign: 'center' }}>
+      <Container maxWidth="lg" sx={{ py: 6, textAlign: "center" }}>
         <CircularProgress />
         <Typography variant="body2" color="textSecondary" sx={{ mt: 2 }}>
           Loading blog post...
@@ -48,16 +160,19 @@ export default function BlogDetailPage() {
   if (isError || !blog) {
     return (
       <Container maxWidth="lg" sx={{ py: 6 }}>
-        <Box sx={{ textAlign: 'center' }}>
-          <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 2, color: 'error.main' }}>
-            {error instanceof Error ? error.message : 'Blog post not found'}
+        <Box sx={{ textAlign: "center" }}>
+          <Typography
+            variant="h5"
+            sx={{ fontWeight: "bold", mb: 2, color: "error.main" }}
+          >
+            {error instanceof Error ? error.message : "Blog post not found"}
           </Typography>
           <Button
             variant="contained"
-            onClick={() => navigate('/blogs')}
+            onClick={() => navigate("/blogs")}
             sx={{
-              backgroundColor: '#667eea',
-              '&:hover': { backgroundColor: '#5568d3' },
+              backgroundColor: "#667eea",
+              "&:hover": { backgroundColor: "#5568d3" },
             }}
           >
             Back to Blogs
@@ -71,8 +186,8 @@ export default function BlogDetailPage() {
     <Container maxWidth="md" sx={{ py: 6 }}>
       {/* Back Button */}
       <Button
-        onClick={() => navigate('/blogs')}
-        sx={{ mb: 4, textTransform: 'none', fontSize: '1rem' }}
+        onClick={() => navigate("/blogs")}
+        sx={{ mb: 4, textTransform: "none", fontSize: "1rem" }}
       >
         ← Back to Blogs
       </Button>
@@ -85,89 +200,26 @@ export default function BlogDetailPage() {
           height="400"
           image={blog.image}
           alt={blog.title}
-          sx={{ objectFit: 'cover' }}
+          sx={{ objectFit: "cover" }}
         />
 
         {/* Blog Content */}
         <CardContent sx={{ p: 4 }}>
-          {/* Category Badge */}
-          <Box
-            sx={{
-              display: 'inline-block',
-              backgroundColor: '#667eea',
-              color: 'white',
-              px: 2,
-              py: 0.5,
-              borderRadius: 1,
-              mb: 2,
-              fontSize: '0.875rem',
-              fontWeight: 'bold',
-            }}
-          >
-            {blog.category}
-          </Box>
-
-          {/* Title */}
-          <Typography variant="h3" sx={{ fontWeight: 'bold', mb: 2, lineHeight: 1.3 }}>
-            {blog.title}
-          </Typography>
-
-          {/* Meta Information */}
-          <Box sx={{ display: 'flex', gap: 3, mb: 4, color: 'textSecondary', flexWrap: 'wrap' }}>
-            <Box>
-              <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
-                Author
-              </Typography>
-              <Typography variant="body2">{blog.author}</Typography>
-            </Box>
-            <Box>
-              <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
-                Published
-              </Typography>
-              <Typography variant="body2">
-                {new Date(blog.date).toLocaleDateString('en-US', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                })}
-              </Typography>
-            </Box>
-            <Box>
-              <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
-                Reading Time
-              </Typography>
-              <Typography variant="body2">⏱️ {blog.readTime}</Typography>
-            </Box>
-          </Box>
-
-          {/* Excerpt */}
-          <Typography variant="h6" sx={{ mb: 4, color: 'textSecondary', lineHeight: 1.6 }}>
-            {blog.excerpt}
-          </Typography>
-
-          {/* Divider */}
-          <Box sx={{ borderTop: '2px solid #eee', my: 4 }} />
-
-          {/* Content Placeholder */}
-          <Box sx={{ mb: 4 }}>
-            <Typography variant="body1" sx={{ lineHeight: 1.8, color: 'textSecondary', mb: 2 }}>
-              This is a blog post preview. The full content would be displayed here in a real blog application.
-            </Typography>
-            <Typography variant="body1" sx={{ lineHeight: 1.8, color: 'textSecondary', mb: 2 }}>
-              Category: <strong>{blog.category}</strong>
-            </Typography>
-            <Typography variant="body1" sx={{ lineHeight: 1.8, color: 'textSecondary' }}>
-              Read time: <strong>{blog.readTime}</strong>
-            </Typography>
-          </Box>
+          <BlogHeader blog={blog} />
+          <BlogActions
+            isOwner={isOwner}
+            onEdit={handleEditClick}
+            onDelete={() => setDeleteConfirmOpen(true)}
+          />
+          <BlogContent blog={blog} />
 
           {/* Back Button */}
           <Button
             variant="contained"
-            onClick={() => navigate('/blogs')}
+            onClick={() => navigate("/blogs")}
             sx={{
-              backgroundColor: '#667eea',
-              '&:hover': { backgroundColor: '#5568d3' },
+              backgroundColor: "#667eea",
+              "&:hover": { backgroundColor: "#5568d3" },
               mt: 4,
             }}
           >
@@ -175,6 +227,28 @@ export default function BlogDetailPage() {
           </Button>
         </CardContent>
       </Card>
+
+      {/* Edit Dialog */}
+      <EditBlogDialog
+        open={isEditOpen}
+        editFormData={editFormData}
+        editImagePreview={editImagePreview}
+        isUpdating={isUpdating}
+        isUploadingImage={isUploadingImage}
+        updateError={updateError instanceof Error ? updateError : null}
+        onClose={() => setIsEditOpen(false)}
+        onFormChange={handleEditChange}
+        onImageSelect={handleEditImageSelect}
+        onSave={handleSaveEdit}
+      />
+
+      {/* Delete Confirmation Dialog */}
+      <DeleteConfirmDialog
+        open={deleteConfirmOpen}
+        isDeleting={isDeleting}
+        onClose={() => setDeleteConfirmOpen(false)}
+        onConfirm={handleDeleteConfirm}
+      />
     </Container>
   );
 }

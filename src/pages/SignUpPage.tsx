@@ -1,39 +1,37 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router';
-import { Container, Box, TextField, Button, Typography, Card } from '@mui/material';
-import { useAuth } from '../hooks/useAuth';
+import { Container, Box, TextField, Button, Typography, Card, CircularProgress } from '@mui/material';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useSignUpMutation } from '../hooks/useAuthMutations';
+import { signUpSchema, type SignUpFormData } from '../types/auth.validation';
 
 export default function SignUpPage() {
   const navigate = useNavigate();
-  const { signup } = useAuth();
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
+  const { mutate: signUp, isPending } = useSignUpMutation();
+  
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setError,
+  } = useForm<SignUpFormData>({
+    resolver: zodResolver(signUpSchema),
+    mode: 'onBlur',
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
+  const onSubmit = async (data: SignUpFormData) => {
+    signUp(data, {
+      onSuccess: () => {
+        navigate('/');
+      },
+      onError: (error) => {
+        const errorMessage = error instanceof Error ? error.message : 'Sign up failed';
+        setError('email', {
+          type: 'manual',
+          message: errorMessage,
+        });
+      },
     });
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-    setIsLoading(true);
-
-    try {
-      await signup(formData.email, formData.password, formData.name);
-      navigate('/');
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Sign up failed');
-    } finally {
-      setIsLoading(false);
-    }
   };
 
   return (
@@ -43,50 +41,47 @@ export default function SignUpPage() {
           Create Account
         </Typography>
 
-        {error && (
-          <Typography color="error" sx={{ mb: 2, textAlign: 'center' }}>
-            {error}
-          </Typography>
-        )}
-
-        <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           <TextField
             label="Full Name"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            required
             fullWidth
+            disabled={isPending}
+            error={!!errors.name}
+            helperText={errors.name?.message}
+            {...register('name')}
           />
+          
           <TextField
             label="Email"
-            name="email"
             type="email"
-            value={formData.email}
-            onChange={handleChange}
-            required
             fullWidth
+            disabled={isPending}
+            error={!!errors.email}
+            helperText={errors.email?.message}
+            {...register('email')}
           />
+          
           <TextField
             label="Password"
-            name="password"
             type="password"
-            value={formData.password}
-            onChange={handleChange}
-            required
             fullWidth
+            disabled={isPending}
+            error={!!errors.password}
+            helperText={errors.password?.message}
+            {...register('password')}
           />
+          
           <Button
             type="submit"
             variant="contained"
-            disabled={isLoading}
+            disabled={isPending}
             sx={{
               backgroundColor: '#667eea',
               '&:hover': { backgroundColor: '#5568d3' },
               mt: 2,
             }}
           >
-            {isLoading ? 'Creating account...' : 'Sign Up'}
+            {isPending ? <CircularProgress size={24} /> : 'Sign Up'}
           </Button>
         </Box>
 

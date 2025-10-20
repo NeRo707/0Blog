@@ -11,10 +11,12 @@ const createBlogMutation = async (blogData: Omit<Blog, 'id'>) => {
     {
       title: blogData.title,
       excerpt: blogData.excerpt,
+      content: blogData.content || '',
       image: blogData.image,
       category: blogData.category,
       readTime: blogData.readTime,
       author: blogData.author,
+      authorId: blogData.authorId,
       date: blogData.date,
     }
   );

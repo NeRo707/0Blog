@@ -45,12 +45,6 @@ export default function Navbar() {
 
           {/* Navigation Links */}
           <Box sx={{ display: 'flex', gap: 3, alignItems: 'center' }}>
-            <Link to="/" style={{ textDecoration: 'none' }}>
-              <Button sx={{ color: 'white', '&:hover': { opacity: 0.8 } }}>
-                Home
-              </Button>
-            </Link>
-
             <Link to="/blogs" style={{ textDecoration: 'none' }}>
               <Button sx={{ color: 'white', '&:hover': { opacity: 0.8 } }}>
                 Blogs
@@ -62,11 +56,6 @@ export default function Navbar() {
                 <Link to="/dashboard" style={{ textDecoration: 'none' }}>
                   <Button sx={{ color: 'white', '&:hover': { opacity: 0.8 } }}>
                     Dashboard
-                  </Button>
-                </Link>
-                <Link to="/blogs/create" style={{ textDecoration: 'none' }}>
-                  <Button sx={{ color: 'white', '&:hover': { opacity: 0.8 } }}>
-                    ✏️ New Post
                   </Button>
                 </Link>
               </>

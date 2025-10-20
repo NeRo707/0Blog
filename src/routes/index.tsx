@@ -11,6 +11,7 @@ import CreateBlogPage from "../pages/CreateBlogPage";
 import SignInPage from "../pages/SignInPage";
 import SignUpPage from "../pages/SignUpPage";
 import RootLayout from "../components/layout/RootLayout";
+import { ProtectedRoute } from "../components/auth/ProtectedRoute";
 
 export const router = createBrowserRouter([
   {
@@ -23,19 +24,35 @@ export const router = createBrowserRouter([
       },
       {
         path: "blogs",
-        element: <BlogListPage />,
+        element: (
+          <ProtectedRoute>
+            <BlogListPage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "blogs/:id",
-        element: <BlogDetailPage />,
+        element: (
+          <ProtectedRoute>
+            <BlogDetailPage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "blogs/create",
-        element: <CreateBlogPage />,
+        element: (
+          <ProtectedRoute>
+            <CreateBlogPage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "dashboard",
-        element: <DashboardPage />,
+        element: (
+          <ProtectedRoute>
+            <DashboardPage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "sign-in",
