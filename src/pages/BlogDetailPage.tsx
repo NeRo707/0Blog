@@ -9,9 +9,7 @@ import {
   CardMedia,
   CardContent,
 } from "@mui/material";
-import { databases } from "../lib/appwrite";
 import { useQuery } from "@tanstack/react-query";
-import { APPWRITE_CONFIG } from "../config/constants";
 import { useAuth } from "../hooks/useAuth";
 import { useBlogStore } from "../store/blogStore";
 import { useUpdateBlogMutation } from "../hooks/useUpdateBlogMutation";
@@ -24,27 +22,7 @@ import {
   DeleteConfirmDialog,
 } from "../components/ui";
 import type { Blog } from "../types/blog";
-
-const fetchBlog = async (blogId: string): Promise<Blog> => {
-  const doc = await databases.getDocument(
-    APPWRITE_CONFIG.databaseId,
-    APPWRITE_CONFIG.blogsCollectionId,
-    blogId
-  );
-
-  return {
-    id: doc.$id,
-    title: doc.title as string,
-    excerpt: doc.excerpt as string,
-    content: doc.content as string | undefined,
-    image: doc.image as string,
-    author: doc.author as string,
-    authorId: doc.authorId as string,
-    date: doc.date as string,
-    category: doc.category as string,
-    readTime: doc.readTime as string,
-  };
-};
+import { fetchBlogById } from "../services/blogService";
 
 export default function BlogDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -69,7 +47,7 @@ export default function BlogDetailPage() {
     error,
   } = useQuery({
     queryKey: ["blog", id],
-    queryFn: () => fetchBlog(id!),
+    queryFn: () => fetchBlogById(id!),
     enabled: !!id,
   });
 

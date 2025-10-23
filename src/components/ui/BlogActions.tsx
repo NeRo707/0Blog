@@ -17,7 +17,7 @@ export default function BlogActions({
     <Box sx={{ display: "flex", gap: 2, mb: 4 }}>
       <Button
         variant="contained"
-        color="primary"
+        color="info"
         onClick={onEdit}
       >
         ✏️ Edit Post

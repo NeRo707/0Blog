@@ -10,9 +10,3 @@ export interface Blog {
   category: string;
   readTime: string;
 }
-
-export interface BlogDocument extends Blog {
-  $id: string;
-  $createdAt?: string;
-  $updatedAt?: string;
-}

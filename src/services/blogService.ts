@@ -1,23 +1,36 @@
-import { databases } from '../lib/appwrite';
-import { Query } from 'appwrite';
-import { APPWRITE_CONFIG } from '../config/constants';
-import type { Blog } from '../types/blog';
+import { databases } from "../lib/appwrite";
+import { Query } from "appwrite";
+import type { Models } from "appwrite";
+import { APPWRITE_CONFIG } from "../config/constants";
+import type { Blog } from "../types/blog";
+
+// Define the structure of your Appwrite document
+interface BlogDocument extends Models.Document {
+  title: string;
+  excerpt: string;
+  content?: string;
+  image: string;
+  author: string;
+  authorId: string;
+  date: string;
+  category: string;
+  readTime: string;
+}
 
 /**
  * Helper function to map Appwrite document to Blog type
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const mapDocToBlog = (doc: any): Blog => ({
+const mapDocToBlog = (doc: BlogDocument): Blog => ({
   id: doc.$id,
-  title: doc.title as string,
-  excerpt: doc.excerpt as string,
-  content: doc.content as string | undefined,
-  image: doc.image as string,
-  author: doc.author as string,
-  authorId: doc.authorId as string,
-  date: doc.date as string,
-  category: doc.category as string,
-  readTime: doc.readTime as string,
+  title: doc.title,
+  excerpt: doc.excerpt,
+  content: doc.content,
+  image: doc.image,
+  author: doc.author,
+  authorId: doc.authorId,
+  date: doc.date,
+  category: doc.category,
+  readTime: doc.readTime,
 });
 
 /**
@@ -25,14 +38,14 @@ const mapDocToBlog = (doc: any): Blog => ({
  */
 export const fetchBlogs = async (): Promise<Blog[]> => {
   try {
-    const response = await databases.listDocuments(
+    const response = await databases.listDocuments<BlogDocument>(
       APPWRITE_CONFIG.databaseId,
       APPWRITE_CONFIG.blogsCollectionId
     );
 
     return response.documents.map(mapDocToBlog);
   } catch (error) {
-    console.error('Error fetching blogs:', error);
+    console.error("Error fetching blogs:", error);
     throw error;
   }
 };
@@ -40,17 +53,19 @@ export const fetchBlogs = async (): Promise<Blog[]> => {
 /**
  * Fetch blogs filtered by category
  */
-export const fetchBlogsByCategory = async (category: string): Promise<Blog[]> => {
+export const fetchBlogsByCategory = async (
+  category: string
+): Promise<Blog[]> => {
   try {
-    const response = await databases.listDocuments(
+    const response = await databases.listDocuments<BlogDocument>(
       APPWRITE_CONFIG.databaseId,
       APPWRITE_CONFIG.blogsCollectionId,
-      [Query.equal('category', category)]
+      [Query.equal("category", category)]
     );
 
     return response.documents.map(mapDocToBlog);
   } catch (error) {
-    console.error('Error fetching blogs by category:', error);
+    console.error("Error fetching blogs by category:", error);
     throw error;
   }
 };
@@ -60,15 +75,15 @@ export const fetchBlogsByCategory = async (category: string): Promise<Blog[]> =>
  */
 export const searchBlogs = async (query: string): Promise<Blog[]> => {
   try {
-    const response = await databases.listDocuments(
+    const response = await databases.listDocuments<BlogDocument>(
       APPWRITE_CONFIG.databaseId,
       APPWRITE_CONFIG.blogsCollectionId,
-      [Query.search('title', query)]
+      [Query.search("title", query)]
     );
 
     return response.documents.map(mapDocToBlog);
   } catch (error) {
-    console.error('Error searching blogs:', error);
+    console.error("Error searching blogs:", error);
     throw error;
   }
 };
@@ -78,7 +93,7 @@ export const searchBlogs = async (query: string): Promise<Blog[]> => {
  */
 export const fetchBlogById = async (blogId: string): Promise<Blog> => {
   try {
-    const doc = await databases.getDocument(
+    const doc = await databases.getDocument<BlogDocument>(
       APPWRITE_CONFIG.databaseId,
       APPWRITE_CONFIG.blogsCollectionId,
       blogId
@@ -86,7 +101,7 @@ export const fetchBlogById = async (blogId: string): Promise<Blog> => {
 
     return mapDocToBlog(doc);
   } catch (error) {
-    console.error('Error fetching blog:', error);
+    console.error("Error fetching blog:", error);
     throw error;
   }
 };
@@ -96,15 +111,15 @@ export const fetchBlogById = async (blogId: string): Promise<Blog> => {
  */
 export const fetchBlogsByAuthor = async (authorId: string): Promise<Blog[]> => {
   try {
-    const response = await databases.listDocuments(
+    const response = await databases.listDocuments<BlogDocument>(
       APPWRITE_CONFIG.databaseId,
       APPWRITE_CONFIG.blogsCollectionId,
-      [Query.equal('authorId', authorId)]
+      [Query.equal("authorId", authorId)]
     );
 
     return response.documents.map(mapDocToBlog);
   } catch (error) {
-    console.error('Error fetching blogs by author:', error);
+    console.error("Error fetching blogs by author:", error);
     throw error;
   }
 };
@@ -114,10 +129,10 @@ export const fetchBlogsByAuthor = async (authorId: string): Promise<Blog[]> => {
  */
 export const updateBlog = async (
   blogId: string,
-  updates: Partial<Omit<Blog, 'id'>>
+  updates: Partial<Omit<Blog, "id">>
 ): Promise<Blog> => {
   try {
-    const doc = await databases.updateDocument(
+    const doc = await databases.updateDocument<BlogDocument>(
       APPWRITE_CONFIG.databaseId,
       APPWRITE_CONFIG.blogsCollectionId,
       blogId,
@@ -126,7 +141,7 @@ export const updateBlog = async (
 
     return mapDocToBlog(doc);
   } catch (error) {
-    console.error('Error updating blog:', error);
+    console.error("Error updating blog:", error);
     throw error;
   }
 };
@@ -142,7 +157,7 @@ export const deleteBlog = async (blogId: string): Promise<void> => {
       blogId
     );
   } catch (error) {
-    console.error('Error deleting blog:', error);
+    console.error("Error deleting blog:", error);
     throw error;
   }
 };

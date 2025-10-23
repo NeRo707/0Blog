@@ -36,31 +36,6 @@ export default function BlogContent({ blog }: BlogContentProps) {
           No content available for this blog post.
         </Typography>
       )}
-
-      {/* Additional Info */}
-      <Box
-        sx={{
-          bgcolor: "action.hover",
-          p: 2,
-          borderRadius: 1,
-          display: "flex",
-          gap: 3,
-          flexWrap: "wrap",
-        }}
-      >
-        <Box>
-          <Typography variant="caption" sx={{ fontWeight: "bold" }}>
-            CATEGORY
-          </Typography>
-          <Typography variant="body2">{blog.category}</Typography>
-        </Box>
-        <Box>
-          <Typography variant="caption" sx={{ fontWeight: "bold" }}>
-            READ TIME
-          </Typography>
-          <Typography variant="body2">⏱️ {blog.readTime}</Typography>
-        </Box>
-      </Box>
     </Box>
   );
 }

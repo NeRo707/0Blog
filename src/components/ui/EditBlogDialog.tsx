@@ -135,6 +135,7 @@ export default function EditBlogDialog({
             fullWidth
             sx={{ textTransform: "none", mb: 1 }}
             disabled={isUploadingImage}
+            color="info"
           >
             {isUploadingImage ? "Uploading..." : "Choose Image"}
             <input
@@ -170,11 +171,11 @@ export default function EditBlogDialog({
       </DialogContent>
 
       <DialogActions>
-        <Button onClick={closeEditDialog}>Cancel</Button>
+        <Button color="error" onClick={closeEditDialog}>Cancel</Button>
         <Button
           onClick={onSave}
           variant="contained"
-          color="primary"
+          color="info"
           disabled={isUpdating}
         >
           {isUpdating ? <CircularProgress size={20} /> : "Save"}
