@@ -8,12 +8,15 @@ import {
   Card,
   CardMedia,
   CardContent,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "../hooks/useAuth";
 import { useBlogStore } from "../store/blogStore";
 import { useUpdateBlogMutation } from "../hooks/useUpdateBlogMutation";
 import { useDeleteBlogMutation } from "../hooks/useDeleteBlogMutation";
+import { useSnackbar } from "../hooks/useSnackbar";
 import {
   BlogHeader,
   BlogContent,
@@ -23,21 +26,16 @@ import {
 } from "../components/ui";
 import type { Blog } from "../types/blog";
 import { fetchBlogById } from "../services/blogService";
+import { useCallback } from "react";
 
 export default function BlogDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const {
-    editFormData,
-    openEditDialog,
-    openDeleteDialog,
-  } = useBlogStore();
+  const { editFormData, openEditDialog, openDeleteDialog } = useBlogStore();
+  const { snackbar, showSuccess, showError, hideSnackbar } = useSnackbar();
 
-  const {
-    mutate: updateBlog,
-    isPending: isUpdating,
-  } = useUpdateBlogMutation();
+  const { mutate: updateBlog, isPending: isUpdating } = useUpdateBlogMutation();
   const { mutate: deleteBlog, isPending: isDeleting } = useDeleteBlogMutation();
 
   const {
@@ -58,7 +56,7 @@ export default function BlogDetailPage() {
     openEditDialog(blog);
   };
 
-  const handleSaveEdit = () => {
+  const handleSaveEdit = useCallback(() => {
     if (!id || !blog) return;
     const updates = {
       title: editFormData.title,
@@ -67,13 +65,23 @@ export default function BlogDetailPage() {
       category: editFormData.category,
       readTime: editFormData.readTime,
       image: editFormData.image,
-      author: editFormData.author,
       authorId: editFormData.authorId,
       date: editFormData.date,
     } as Partial<Omit<Blog, "id">>;
 
-    updateBlog({ blogId: id, updates });
-  };
+    updateBlog(
+      { blogId: id, updates },
+      {
+        onSuccess: () => {
+          showSuccess("Blog updated successfully!");
+        },
+        onError: (error: unknown) => {
+          const errorMessage = error instanceof Error ? error.message : "Unknown error";
+          showError(`Failed to update blog: ${errorMessage}`);
+        },
+      }
+    );
+  }, [id, blog, editFormData, updateBlog, showSuccess, showError]);
 
   const handleDeleteConfirm = () => {
     if (!id) return;
@@ -162,16 +170,23 @@ export default function BlogDetailPage() {
       </Card>
 
       {/* Edit Dialog */}
-      <EditBlogDialog
-        isUpdating={isUpdating}
-        onSave={handleSaveEdit}
-      />
+      <EditBlogDialog isUpdating={isUpdating} onSave={handleSaveEdit} />
 
       {/* Delete Confirmation Dialog */}
       <DeleteConfirmDialog
         isDeleting={isDeleting}
         onConfirm={handleDeleteConfirm}
       />
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={hideSnackbar}
+        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+      >
+        <Alert onClose={hideSnackbar} severity={snackbar.severity} sx={{ width: "100%" }}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Container>
   );
 }
