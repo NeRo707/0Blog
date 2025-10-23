@@ -233,18 +233,20 @@ export default function UserBlogsTable({ blogs, isLoading = false }: UserBlogsTa
                     <TableCell align="center">
                       <Button
                         size="small"
-                        color="primary"
+                        color="info"
                         onClick={() => handleEditClick(blog)}
                         sx={{ mr: 1 }}
                         disabled={isUpdating || isDeleting}
+                        variant='contained'
                       >
                         Edit
                       </Button>
                       <Button
                         size="small"
                         onClick={() => setDeleteConfirmId(blog.id)}
-                        sx={{ color: 'error.main' }}
+                        color='error'
                         disabled={isUpdating || isDeleting}
+                        variant='outlined'
                       >
                         Delete
                       </Button>

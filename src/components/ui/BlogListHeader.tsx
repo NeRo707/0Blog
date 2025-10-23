@@ -1,4 +1,4 @@
-import { Box, Typography, TextField, MenuItem, Button } from '@mui/material';
+import { Box, Typography, TextField, MenuItem } from "@mui/material";
 
 interface BlogListHeaderProps {
   searchQuery: string;
@@ -7,7 +7,17 @@ interface BlogListHeaderProps {
   onCategoryChange: (value: string) => void;
 }
 
-const CATEGORIES = ['All', 'React', 'TypeScript', 'JavaScript', 'Design', 'Backend', 'CSS', 'Performance', 'AI/ML'];
+const CATEGORIES = [
+  "All",
+  "React",
+  "TypeScript",
+  "JavaScript",
+  "Design",
+  "Backend",
+  "CSS",
+  "Performance",
+  "AI/ML",
+];
 
 export default function BlogListHeader({
   searchQuery,
@@ -18,8 +28,8 @@ export default function BlogListHeader({
   return (
     <>
       {/* Header */}
-      <Box sx={{ textAlign: 'center', mb: 6 }}>
-        <Typography variant="h3" sx={{ fontWeight: 'bold', mb: 2 }}>
+      <Box sx={{ textAlign: "center", mb: 6 }}>
+        <Typography variant="h3" sx={{ fontWeight: "bold", mb: 2 }}>
           Discover Amazing Blogs
         </Typography>
         <Typography variant="h6" color="textSecondary" sx={{ mb: 4 }}>
@@ -28,14 +38,30 @@ export default function BlogListHeader({
       </Box>
 
       {/* Search and Filter */}
-      <Box sx={{ display: 'flex', gap: 2, mb: 4, flexDirection: { xs: 'column', sm: 'row' }, alignItems: 'flex-end' }}>
+      <Box
+        sx={{
+          display: "flex",
+          gap: 2,
+          mb: 4,
+          flexDirection: { xs: "column", sm: "row" },
+          alignItems: "flex-end",
+        }}
+      >
         <TextField
           placeholder="Search blogs..."
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
-          sx={{ flex: 1, minWidth: 250 }}
-          InputProps={{
-            startAdornment: <span style={{ marginRight: 8 }}>🔍</span>,
+          sx={{
+            flex: 1,
+            minWidth: 250,
+            "& .MuiOutlinedInput-root": {
+              "&:hover fieldset": {
+                borderColor: "secondary.main",
+              },
+              "&.Mui-focused fieldset": {
+                borderColor: "secondary.main",
+              },
+            },
           }}
         />
         <TextField
@@ -43,7 +69,20 @@ export default function BlogListHeader({
           label="Category"
           value={selectedCategory}
           onChange={(e) => onCategoryChange(e.target.value)}
-          sx={{ minWidth: 200 }}
+          sx={{
+            minWidth: 200,
+            "& .MuiOutlinedInput-root": {
+              "&:hover fieldset": {
+                borderColor: "secondary.main",
+              },
+              "&.Mui-focused fieldset": {
+                borderColor: "secondary.main",
+              },
+            },
+            "& .MuiInputLabel-root.Mui-focused": {
+              color: "secondary.main",
+            },
+          }}
         >
           {CATEGORIES.map((cat) => (
             <MenuItem key={cat} value={cat}>
@@ -51,15 +90,6 @@ export default function BlogListHeader({
             </MenuItem>
           ))}
         </TextField>
-        <Button
-          variant="contained"
-          color="primary"
-          sx={{
-            height: 56,
-          }}
-        >
-          Filter
-        </Button>
       </Box>
     </>
   );
