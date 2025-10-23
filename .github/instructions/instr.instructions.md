@@ -1,7 +1,7 @@
 ---
 applyTo: '**'
 ---
-# Copilot Instructions for Project0
+# Copilot Instructions for 0blog
 
 ## Project Overview
 
