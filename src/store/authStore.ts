@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { account } from '../lib/appwrite';
+import { userService } from '../services/userService';
 import type { User } from '../types/auth';
 
 interface AuthStore {
@@ -49,6 +50,15 @@ export const useAuthStore = create<AuthStore>((set) => ({
   signup: async (email: string, password: string, name: string) => {
     try {
       const response = await account.create('unique()', email, password, name);
+      
+      // Create user profile in users collection
+      try {
+        await userService.createUserProfile(response.$id, name, email);
+      } catch (profileError) {
+        console.error('Failed to create user profile:', profileError);
+        // Don't fail signup if profile creation fails
+      }
+      
       // Auto sign in after signup
       await account.createEmailSession(email, password);
       set({

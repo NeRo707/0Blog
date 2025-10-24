@@ -3,8 +3,12 @@ import { Outlet } from 'react-router';
 import { Box } from '@mui/material';
 import Navbar from './Navbar';
 import Footer from './Footer';
+import { ChatBubble } from '../chat/ChatBubble';
+import { useAuthStore } from '../../store/authStore';
 
 export default function RootLayout() {
+  const { isAuthenticated } = useAuthStore();
+
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <Navbar />
@@ -12,6 +16,7 @@ export default function RootLayout() {
         <Outlet />
       </Box>
       <Footer />
+      {isAuthenticated && <ChatBubble />}
     </Box>
   );
 }

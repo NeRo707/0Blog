@@ -1,5 +1,5 @@
 // src/routes/index.tsx
-import { createBrowserRouter } from "react-router";
+import { createHashRouter } from "react-router";
 import { Box } from "@mui/material";
 
 // Pages
@@ -13,7 +13,7 @@ import SignUpPage from "../pages/SignUpPage";
 import RootLayout from "../components/layout/RootLayout";
 import { ProtectedRoute } from "../components/auth/ProtectedRoute";
 
-export const router = createBrowserRouter([
+export const router = createHashRouter([
   {
     path: "/",
     element: <RootLayout />,

@@ -9,6 +9,9 @@ export const APPWRITE_CONFIG = {
   databaseId: import.meta.env.VITE_APPWRITE_DATABASE_ID,
   blogsCollectionId: import.meta.env.VITE_APPWRITE_BLOGS_COLLECTION_ID,
   bucketId: import.meta.env.VITE_APPWRITE_BUCKET_ID,
+  conversationsCollectionId: 'conversations',
+  messagesCollectionId: 'messages',
+  usersCollectionId: 'users',
 } as const;
 
 // Validate required environment variables
