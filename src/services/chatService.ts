@@ -12,16 +12,26 @@ export const chatService = {
     const participantIds = [currentUser.$id, otherUserId].sort();
 
     // Try to find existing conversation
+    // We need to check that participantIds contains exactly these two users
     const response = await databases.listDocuments(
       databaseId,
       conversationsCollectionId,
       [
-        Query.equal('participantIds', participantIds),
+        Query.equal('participantIds', participantIds[0]),
+        Query.equal('participantIds', participantIds[1]),
       ]
     );
 
-    if (response.documents.length > 0) {
-      return response.documents[0] as unknown as Conversation;
+    // Filter to ensure exact match (only 2 participants, no more)
+    const exactMatch = response.documents.find((doc) => {
+      const docParticipants = (doc as unknown as Conversation).participantIds;
+      return docParticipants.length === 2 &&
+             docParticipants.includes(participantIds[0]) &&
+             docParticipants.includes(participantIds[1]);
+    });
+
+    if (exactMatch) {
+      return exactMatch as unknown as Conversation;
     }
 
     // Create new conversation
