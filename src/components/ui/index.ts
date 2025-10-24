@@ -1,6 +1,6 @@
 export { default as StatsCard } from './StatsCard';
 export { default as MetricsChart } from './MetricsChart';
-export { default as UserBlogsTable } from './UserBlogsTable';
+export { default as UserBlogsTable } from '../../pages/dashboard/_components/UserBlogsTable';
 export { default as BlogForm } from './BlogForm';
 export { default as BlogListHeader } from './BlogListHeader';
 export { default as BlogHeader } from './BlogHeader';
