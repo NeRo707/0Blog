@@ -109,8 +109,8 @@ export const ChatWindow = ({ conversation }: ChatWindowProps) => {
                   sx={{
                     p: 1.5,
                     maxWidth: '70%',
-                    bgcolor: isOwnMessage ? 'primary.main' : 'grey.100',
-                    color: isOwnMessage ? 'primary.contrastText' : 'text.primary',
+                    bgcolor: isOwnMessage ? 'primary.main' : 'secondary.main',
+                    color: 'primary.contrastText',
                   }}
                 >
                   <Typography variant="body2">{msg.content}</Typography>
