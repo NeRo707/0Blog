@@ -22,7 +22,7 @@ export default function BlogListPage() {
   }, [blogs, selectedCategory, searchQuery]);
 
   return (
-    <Container maxWidth="lg" sx={{ py: 6 }}>
+    <Container maxWidth="lg" sx={{ py: { xs: 3, sm: 4, md: 6 }, px: { xs: 2, sm: 3 } }}>
       {/* Header with Search & Filter */}
       <BlogListHeader
         searchQuery={searchQuery}
@@ -56,7 +56,14 @@ export default function BlogListPage() {
       {/* Results info */}
       {!isPending && !isError && (
         <>
-          <Typography variant="body2" color="textSecondary" sx={{ mb: 3 }}>
+          <Typography 
+            variant="body2" 
+            color="textSecondary" 
+            sx={{ 
+              mb: { xs: 2, sm: 3 },
+              fontSize: { xs: '0.8rem', sm: '0.875rem' }
+            }}
+          >
             Showing {filteredBlogs.length} {filteredBlogs.length === 1 ? 'article' : 'articles'}
           </Typography>
 
@@ -65,8 +72,8 @@ export default function BlogListPage() {
             <Box
               sx={{
                 display: 'grid',
-                gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: 'repeat(3, 1fr)' },
-                gap: 3,
+                gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' },
+                gap: { xs: 2, sm: 2.5, md: 3 },
               }}
             >
               {filteredBlogs.map((blog) => (
@@ -74,11 +81,22 @@ export default function BlogListPage() {
               ))}
             </Box>
           ) : (
-            <Box sx={{ textAlign: 'center', py: 8 }}>
-              <Typography variant="h6" color="textSecondary">
+            <Box sx={{ textAlign: 'center', py: { xs: 6, sm: 8 }, px: 2 }}>
+              <Typography 
+                variant="h6" 
+                color="textSecondary"
+                sx={{ fontSize: { xs: '1rem', sm: '1.25rem' } }}
+              >
                 No blogs found matching your criteria
               </Typography>
-              <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
+              <Typography 
+                variant="body2" 
+                color="textSecondary" 
+                sx={{ 
+                  mt: 1,
+                  fontSize: { xs: '0.8rem', sm: '0.875rem' }
+                }}
+              >
                 Try adjusting your search or category filter
               </Typography>
             </Box>

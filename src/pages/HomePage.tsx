@@ -16,24 +16,47 @@ export default function HomePage() {
       <Box sx={{ 
         bgcolor: 'primary.main',
         color: 'white',
-        py: { xs: 10, md: 14 },
-        mb: 8
+        py: { xs: 6, sm: 8, md: 14 },
+        mb: { xs: 4, sm: 6, md: 8 },
+        width: '100%',
+        overflowX: 'hidden'
       }}>
-        <Container maxWidth="lg">
+        <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3 } }}>
           <Box sx={{ 
             display: 'grid', 
             gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, 
-            gap: 4,
+            gap: { xs: 3, sm: 4 },
             alignItems: 'center'
           }}>
             <Box>
-              <Typography variant="h3" sx={{ fontWeight: 700, mb: 2, lineHeight: 1.2 }}>
+              <Typography 
+                variant="h3" 
+                sx={{ 
+                  fontWeight: 700, 
+                  mb: 2, 
+                  lineHeight: 1.2,
+                  fontSize: { xs: '1.75rem', sm: '2.5rem', md: '3rem' }
+                }}
+              >
                 Welcome to BlogHub
               </Typography>
-              <Typography variant="h6" sx={{ mb: 4, opacity: 0.95, fontWeight: 300 }}>
+              <Typography 
+                variant="h6" 
+                sx={{ 
+                  mb: { xs: 3, sm: 4 }, 
+                  opacity: 0.95, 
+                  fontWeight: 300,
+                  fontSize: { xs: '0.95rem', sm: '1.1rem', md: '1.25rem' }
+                }}
+              >
                 Discover amazing articles about web development, design, and technology trends. Share your knowledge with the world.
               </Typography>
-              <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+              <Box sx={{ 
+                display: 'flex', 
+                gap: { xs: 1.5, sm: 2 }, 
+                flexWrap: 'wrap',
+                justifyContent: { xs: 'center', sm: 'flex-start' }
+              }}>
                 <Button 
                   component={RouterLink}
                   to="/blogs"
@@ -43,7 +66,9 @@ export default function HomePage() {
                     backgroundColor: 'white', 
                     color: 'primary.main',
                     fontWeight: 'bold',
-                    '&:hover': { backgroundColor: '#f0f0f0' }
+                    '&:hover': { backgroundColor: '#f0f0f0' },
+                    fontSize: { xs: '0.875rem', sm: '1rem' },
+                    px: { xs: 2, sm: 3 }
                   }}
                 >
                   Read Articles
@@ -58,7 +83,9 @@ export default function HomePage() {
                       borderColor: 'white', 
                       color: 'white',
                       fontWeight: 'bold',
-                      '&:hover': { backgroundColor: 'rgba(255,255,255,0.1)' }
+                      '&:hover': { backgroundColor: 'rgba(255,255,255,0.1)' },
+                      fontSize: { xs: '0.875rem', sm: '1rem' },
+                      px: { xs: 2, sm: 3 }
                     }}
                   >
                     Get Started
@@ -74,7 +101,9 @@ export default function HomePage() {
                       borderColor: 'white', 
                       color: 'white',
                       fontWeight: 'bold',
-                      '&:hover': { backgroundColor: 'rgba(255,255,255,0.1)' }
+                      '&:hover': { backgroundColor: 'rgba(255,255,255,0.1)' },
+                      fontSize: { xs: '0.875rem', sm: '1rem' },
+                      px: { xs: 2, sm: 3 }
                     }}
                   >
                     Dashboard
@@ -86,27 +115,48 @@ export default function HomePage() {
               component="img"
               src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=600&h=400&fit=crop"
               alt="Hero"
-              sx={{ width: '100%', borderRadius: 2, display: { xs: 'none', md: 'block' } }}
+              sx={{ 
+                width: '100%', 
+                maxWidth: '100%',
+                height: 'auto',
+                borderRadius: 2, 
+                display: { xs: 'none', md: 'block' } 
+              }}
             />
           </Box>
         </Container>
       </Box>
 
       {/* Features Section */}
-      <Container maxWidth="lg" sx={{ mb: 10 }}>
-        <Box sx={{ textAlign: 'center', mb: 6 }}>
-          <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 2 }}>
+      <Container maxWidth="lg" sx={{ mb: { xs: 6, sm: 8, md: 10 }, px: { xs: 2, sm: 3 } }}>
+        <Box sx={{ textAlign: 'center', mb: { xs: 4, sm: 6 } }}>
+          <Typography 
+            variant="h4" 
+            sx={{ 
+              fontWeight: 'bold', 
+              mb: 2,
+              fontSize: { xs: '1.5rem', sm: '2rem', md: '2.125rem' }
+            }}
+          >
             Why Choose BlogHub?
           </Typography>
-          <Typography variant="body1" color="textSecondary" sx={{ mb: 4 }}>
+          <Typography 
+            variant="body1" 
+            color="textSecondary" 
+            sx={{ 
+              mb: 4,
+              fontSize: { xs: '0.875rem', sm: '1rem' },
+              px: { xs: 2, sm: 0 }
+            }}
+          >
             Your one-stop platform for all things web development
           </Typography>
         </Box>
 
         <Box sx={{ 
           display: 'grid', 
-          gridTemplateColumns: { xs: '1fr', md: 'repeat(3, 1fr)' }, 
-          gap: 3 
+          gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' }, 
+          gap: { xs: 2, sm: 3 }
         }}>
           <Card sx={{ 
             height: '100%',
@@ -162,21 +212,35 @@ export default function HomePage() {
       </Container>
 
       {/* Featured Articles */}
-      <Container maxWidth="lg" sx={{ mb: 10 }}>
-        <Box sx={{ textAlign: 'center', mb: 6 }}>
-          <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 2 }}>
+      <Container maxWidth="lg" sx={{ mb: { xs: 6, sm: 8, md: 10 }, px: { xs: 2, sm: 3 } }}>
+        <Box sx={{ textAlign: 'center', mb: { xs: 4, sm: 6 } }}>
+          <Typography 
+            variant="h4" 
+            sx={{ 
+              fontWeight: 'bold', 
+              mb: 2,
+              fontSize: { xs: '1.5rem', sm: '2rem', md: '2.125rem' }
+            }}
+          >
             Featured Articles
           </Typography>
-          <Typography variant="body1" color="textSecondary">
+          <Typography 
+            variant="body1" 
+            color="textSecondary"
+            sx={{ 
+              fontSize: { xs: '0.875rem', sm: '1rem' },
+              px: { xs: 2, sm: 0 }
+            }}
+          >
             Check out our latest and greatest content
           </Typography>
         </Box>
 
         <Box sx={{ 
           display: 'grid', 
-          gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: 'repeat(3, 1fr)' }, 
-          gap: 3, 
-          mb: 4 
+          gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' }, 
+          gap: { xs: 2, sm: 3 }, 
+          mb: { xs: 3, sm: 4 }
         }}>
           {featuredBlogs.map((blog) => (
             <BlogCard {...blog} key={blog.id} />
@@ -190,6 +254,10 @@ export default function HomePage() {
             variant="contained"
             color="primary"
             size="large"
+            sx={{
+              fontSize: { xs: '0.875rem', sm: '1rem' },
+              px: { xs: 2, sm: 3 }
+            }}
           >
             View All Articles
           </Button>
@@ -201,15 +269,32 @@ export default function HomePage() {
         <Box sx={{ 
           bgcolor: 'primary.main',
           color: 'white',
-          py: 10,
+          py: { xs: 6, sm: 8, md: 10 },
           textAlign: 'center',
-          mb: 4
+          mb: 4,
+          width: '100%',
+          overflowX: 'hidden'
         }}>
-          <Container maxWidth="md">
-            <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 2 }}>
+          <Container maxWidth="md" sx={{ px: { xs: 2, sm: 3 } }}>
+            <Typography 
+              variant="h4" 
+              sx={{ 
+                fontWeight: 'bold', 
+                mb: 2,
+                fontSize: { xs: '1.5rem', sm: '2rem', md: '2.125rem' }
+              }}
+            >
               Ready to Start Writing?
             </Typography>
-            <Typography variant="body1" sx={{ mb: 4, opacity: 0.95 }}>
+            <Typography 
+              variant="body1" 
+              sx={{ 
+                mb: { xs: 3, sm: 4 }, 
+                opacity: 0.95,
+                fontSize: { xs: '0.875rem', sm: '1rem' },
+                px: { xs: 2, sm: 0 }
+              }}
+            >
               Join thousands of writers and share your insights with the community
             </Typography>
             <Button 
@@ -221,7 +306,9 @@ export default function HomePage() {
                 backgroundColor: 'white', 
                 color: 'primary.main',
                 fontWeight: 'bold',
-                '&:hover': { backgroundColor: '#f0f0f0' }
+                '&:hover': { backgroundColor: '#f0f0f0' },
+                fontSize: { xs: '0.875rem', sm: '1rem' },
+                px: { xs: 2, sm: 3 }
               }}
             >
               Create Account

@@ -94,9 +94,16 @@ export default function BlogDetailPage() {
 
   if (isPending) {
     return (
-      <Container maxWidth="lg" sx={{ py: 6, textAlign: "center" }}>
+      <Container maxWidth="lg" sx={{ py: { xs: 4, sm: 6 }, px: { xs: 2, sm: 3 }, textAlign: "center" }}>
         <CircularProgress />
-        <Typography variant="body2" color="textSecondary" sx={{ mt: 2 }}>
+        <Typography 
+          variant="body2" 
+          color="textSecondary" 
+          sx={{ 
+            mt: 2,
+            fontSize: { xs: '0.875rem', sm: '1rem' }
+          }}
+        >
           Loading blog post...
         </Typography>
       </Container>
@@ -105,11 +112,17 @@ export default function BlogDetailPage() {
 
   if (isError || !blog) {
     return (
-      <Container maxWidth="lg" sx={{ py: 6 }}>
+      <Container maxWidth="lg" sx={{ py: { xs: 4, sm: 6 }, px: { xs: 2, sm: 3 } }}>
         <Box sx={{ textAlign: "center" }}>
           <Typography
             variant="h5"
-            sx={{ fontWeight: "bold", mb: 2, color: "error.main" }}
+            sx={{ 
+              fontWeight: "bold", 
+              mb: 2, 
+              color: "error.main",
+              fontSize: { xs: '1.25rem', sm: '1.5rem' },
+              px: { xs: 2, sm: 0 }
+            }}
           >
             {error instanceof Error ? error.message : "Blog post not found"}
           </Typography>
@@ -117,6 +130,10 @@ export default function BlogDetailPage() {
             variant="contained"
             color="info"
             onClick={() => navigate("/blogs")}
+            sx={{
+              fontSize: { xs: '0.875rem', sm: '1rem' },
+              px: { xs: 2, sm: 3 }
+            }}
           >
             Back to Blogs
           </Button>
@@ -126,29 +143,39 @@ export default function BlogDetailPage() {
   }
 
   return (
-    <Container maxWidth="md" sx={{ py: 6 }}>
+    <Container maxWidth="md" sx={{ py: { xs: 3, sm: 4, md: 6 }, px: { xs: 2, sm: 3 } }}>
       {/* Back Button */}
       <Button
         onClick={() => navigate("/blogs")}
-        sx={{ mb: 4, textTransform: "none", fontSize: "1rem" }}
+        sx={{ 
+          mb: { xs: 2, sm: 3, md: 4 }, 
+          textTransform: "none", 
+          fontSize: { xs: '0.875rem', sm: '1rem' },
+          px: { xs: 1, sm: 2 }
+        }}
         color="info"
       >
         ← Back to Blogs
       </Button>
 
       {/* Blog Card */}
-      <Card sx={{ boxShadow: 3 }}>
+      <Card sx={{ boxShadow: 3, width: '100%', overflow: 'hidden' }}>
         {/* Blog Image */}
         <CardMedia
           component="img"
           height="400"
           image={blog.image}
           alt={blog.title}
-          sx={{ objectFit: "cover" }}
+          sx={{ 
+            objectFit: "cover",
+            height: { xs: '200px', sm: '300px', md: '400px' },
+            width: '100%',
+            maxWidth: '100%'
+          }}
         />
 
         {/* Blog Content */}
-        <CardContent sx={{ p: 4 }}>
+        <CardContent sx={{ p: { xs: 2, sm: 3, md: 4 } }}>
           <BlogHeader blog={blog} />
           <BlogActions
             isOwner={isOwner}
@@ -161,7 +188,11 @@ export default function BlogDetailPage() {
           <Button
             variant="contained"
             onClick={() => navigate("/blogs")}
-            sx={{ mt: 4 }}
+            sx={{ 
+              mt: { xs: 3, sm: 4 },
+              fontSize: { xs: '0.875rem', sm: '1rem' },
+              px: { xs: 2, sm: 3 }
+            }}
             color="info"
           >
             ← Back to All Blogs
