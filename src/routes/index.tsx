@@ -4,7 +4,7 @@ import { Box } from "@mui/material";
 
 // Pages
 import HomePage from "../pages/HomePage";
-import DashboardPage from "../pages/DashboardPage";
+import DashboardPage from "../pages/dashboard/DashboardPage";
 import BlogListPage from "../pages/BlogListPage";
 import BlogDetailPage from "../pages/BlogDetailPage";
 import CreateBlogPage from "../pages/CreateBlogPage";
