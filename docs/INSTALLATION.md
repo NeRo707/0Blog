@@ -10,7 +10,7 @@ Before you begin, ensure you have the following installed:
 - **pnpm** (v8.0.0 or higher) - Package manager
 - **Git** - Version control
 - **Appwrite** account - Backend services
-- **Clerk** account - Authentication
+- **Appwrite** account - Authentication
 
 ### Check Your Installation
 
@@ -94,24 +94,6 @@ For the blogs collection, set these permissions:
 - **Update:** `document.authorId` (only author can update)
 - **Delete:** `document.authorId` (only author can delete)
 
-## Step 4: Set Up Clerk Authentication
-
-### 4.1 Create Clerk Application
-
-1. Go to [Clerk Dashboard](https://dashboard.clerk.com/)
-2. Create a new application
-3. Choose authentication methods (Email, Google, GitHub, etc.)
-4. Note your **Publishable Key**
-
-### 4.2 Configure Clerk Settings
-
-1. Enable the authentication providers you want
-2. Configure redirect URLs:
-   - Sign-in URL: `http://localhost:5173/sign-in`
-   - Sign-up URL: `http://localhost:5173/sign-up`
-   - After sign-in: `http://localhost:5173/dashboard`
-   - After sign-up: `http://localhost:5173/dashboard`
-
 ## Step 5: Environment Variables
 
 Create a `.env` file in the project root:
@@ -124,9 +106,6 @@ cp .env.example .env
 Or create manually with the following content:
 
 ```env
-# Clerk Authentication
-VITE_CLERK_PUBLISHABLE_KEY=pk_test_your_clerk_key_here
-
 # Appwrite Configuration
 VITE_APPWRITE_ENDPOINT=https://cloud.appwrite.io/v1
 VITE_APPWRITE_PROJECT_ID=your_project_id_here
@@ -173,11 +152,9 @@ VITE v7.1.7  ready in XXX ms
 - [ ] Appwrite project created
 - [ ] Database and collection configured
 - [ ] Storage bucket created
-- [ ] Clerk application set up
 - [ ] `.env` file configured with all keys
 - [ ] `pnpm dev` runs without errors
 - [ ] Can access app at `http://localhost:5173`
-- [ ] Can sign up/sign in with Clerk
 - [ ] Can create a test blog post
 
 ## Common Installation Issues
@@ -217,5 +194,4 @@ pnpm run build
 
 - [Vite Documentation](https://vitejs.dev/)
 - [Appwrite Documentation](https://appwrite.io/docs)
-- [Clerk Documentation](https://clerk.com/docs)
 - [pnpm Documentation](https://pnpm.io/)

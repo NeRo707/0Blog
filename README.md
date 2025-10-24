@@ -11,7 +11,7 @@ Welcome to the **0blog** documentation! This is a comprehensive guide for develo
 
 **0blog** is a modern, full-stack blogging platform built with React 19, TypeScript, and Vite. It provides a seamless experience for creating, managing, and sharing blog posts with features like:
 
-- 🔐 Secure authentication via Clerk
+- 🔐 Secure authentication via Appwrite
 - 📝 Rich blog creation and editing
 - 🖼️ Image upload and management
 - 📊 Personal dashboard with analytics
@@ -23,7 +23,7 @@ Welcome to the **0blog** documentation! This is a comprehensive guide for develo
 - **Frontend:** React 19, TypeScript, Vite 7
 - **UI Framework:** Material-UI (MUI) 7 with Emotion
 - **State Management:** Zustand + TanStack Query 5
-- **Authentication:** Clerk React SDK
+- **Authentication:** Appwrite React SDK
 - **Backend:** Appwrite (BaaS)
 - **Form Handling:** React Hook Form + Zod
 - **Routing:** React Router 7
