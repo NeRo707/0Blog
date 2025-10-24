@@ -2,7 +2,7 @@ import { Box, List, ListItem, ListItemButton, ListItemText, Typography, Button, 
 import { Add as AddIcon } from '@mui/icons-material';
 import { useConversations } from '../../hooks/useConversations';
 import { useChatStore } from '../../store/chatStore';
-import { formatDistanceToNow } from './utils';
+import { formatDistanceToNow } from '../../utils/utils';
 
 interface ConversationListProps {
   onNewChat: () => void;

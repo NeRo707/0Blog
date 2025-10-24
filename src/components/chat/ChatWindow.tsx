@@ -15,7 +15,7 @@ import { useSendMessage } from '../../hooks/useSendMessage';
 import { useAuthStore } from '../../store/authStore';
 import { chatService } from '../../services/chatService';
 import type { Conversation } from '../../types/chat';
-import { formatDistanceToNow } from './utils';
+import { formatDistanceToNow } from '../../utils/utils';
 
 interface ChatWindowProps {
   conversation: Conversation;
